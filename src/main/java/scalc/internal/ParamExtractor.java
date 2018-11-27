@@ -24,10 +24,6 @@ public class ParamExtractor {
 
         if (expression instanceof Variable) {
             Number polledNumber = paramsAsQueue.poll();
-            if (polledNumber == null) {
-                throw new RuntimeException("Expression not matching to param length. Each used parameter has to get a value in the parameter list.");
-            }
-
             result.put(((Variable) expression).getName(), polledNumber);
         } else if (expression instanceof ComplexExpression) {
             List<Expression> expressions = ((ComplexExpression) expression).getExpressions();
