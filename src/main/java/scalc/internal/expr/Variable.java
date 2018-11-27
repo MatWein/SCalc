@@ -1,6 +1,6 @@
 package scalc.internal.expr;
 
-public class Variable extends Expression {
+public class Variable extends Expression implements INegatable {
     private boolean positive;
     private String name;
 

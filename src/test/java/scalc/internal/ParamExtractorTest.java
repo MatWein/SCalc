@@ -17,7 +17,7 @@ public class ParamExtractorTest {
 
     @Test
     public void extractParamsInOrder_Function() {
-        Map<String, Number> result = ParamExtractor.extractParamsInOrder(new Function("test(12.0)", "test", new Constant(false, 12.0)));
+        Map<String, Number> result = ParamExtractor.extractParamsInOrder(new Function(true, "test(12.0)", "test", new Constant(false, 12.0)));
         Assert.assertTrue(result.isEmpty());
     }
 
@@ -38,7 +38,7 @@ public class ParamExtractorTest {
     @Test
     public void extractParamsInOrder_ComplexExpression() {
         List<Expression> subExpressions = new ArrayList<Expression>();
-        subExpressions.add(new Function("√(-c)", "√", new Variable(false, "c")));
+        subExpressions.add(new Function(true, "√(-c)", "√", new Variable(false, "c")));
 
         List<Expression> expressions = new ArrayList<Expression>();
         expressions.add(new Variable(true, "var1"));

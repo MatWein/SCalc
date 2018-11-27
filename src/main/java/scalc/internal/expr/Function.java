@@ -1,20 +1,33 @@
 package scalc.internal.expr;
 
-public class Function extends Expression {
-    private String name;
-    private Expression expression;
+import java.util.Collections;
+import java.util.List;
 
-    public Function(String rawExpression, String name, Expression expression) {
+public class Function extends Expression implements INegatable, ISubExpressions {
+    private boolean positive;
+    private String name;
+    private List<Expression> expressions;
+
+    public Function(boolean positive, String rawExpression, String name, Expression expression) {
+        this(positive, rawExpression, name, Collections.singletonList(expression));
+    }
+
+    public Function(boolean positive, String rawExpression, String name, List<Expression> expressions) {
         super(rawExpression);
+        this.positive = positive;
         this.name = name;
-        this.expression = expression;
+        this.expressions = expressions;
+    }
+
+    public boolean isPositive() {
+        return positive;
     }
 
     public String getName() {
         return name;
     }
 
-    public Expression getExpression() {
-        return expression;
+    public List<Expression> getExpressions() {
+        return expressions;
     }
 }

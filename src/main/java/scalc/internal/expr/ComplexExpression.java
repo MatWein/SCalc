@@ -2,7 +2,7 @@ package scalc.internal.expr;
 
 import java.util.List;
 
-public class ComplexExpression extends Expression {
+public class ComplexExpression extends Expression implements ISubExpressions {
     private List<Expression> expressions;
 
     public ComplexExpression(String rawExpression, List<Expression> expressions) {

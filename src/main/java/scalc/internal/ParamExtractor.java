@@ -1,8 +1,7 @@
 package scalc.internal;
 
-import scalc.internal.expr.ComplexExpression;
 import scalc.internal.expr.Expression;
-import scalc.internal.expr.Function;
+import scalc.internal.expr.ISubExpressions;
 import scalc.internal.expr.Variable;
 
 import java.util.*;
@@ -25,13 +24,11 @@ public class ParamExtractor {
         if (expression instanceof Variable) {
             Number polledNumber = paramsAsQueue.poll();
             result.put(((Variable) expression).getName(), polledNumber);
-        } else if (expression instanceof ComplexExpression) {
-            List<Expression> expressions = ((ComplexExpression) expression).getExpressions();
+        } else if (expression instanceof ISubExpressions) {
+            List<Expression> expressions = ((ISubExpressions) expression).getExpressions();
             for (Expression subExpression : expressions) {
                 iterateExpression(result, subExpression, paramsAsQueue);
             }
-        } else if (expression instanceof Function) {
-            iterateExpression(result, ((Function) expression).getExpression(), paramsAsQueue);
         }
     }
 
