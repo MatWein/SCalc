@@ -6,15 +6,21 @@ import scalc.internal.SimpleCalculator;
 import scalc.internal.expr.Expression;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SCalc<RETURN_TYPE extends Number> {
     private final Class<RETURN_TYPE> returnType;
     private Expression expression;
-    private Map<String, Number> params;
-    private Integer scale;
-    private RoundingMode roundingMode;
+    private Map<String, Number> params = new HashMap<String, Number>();
+    private int resultScale = 8;
+    private RoundingMode resultRoundingMode = RoundingMode.HALF_UP;
+    private MathContext resultMathContext = new MathContext(resultScale, resultRoundingMode);
+    private int calculationScale = 8;
+    private RoundingMode calculationRoundingMode = RoundingMode.HALF_UP;
+    private MathContext calculationMathContext = new MathContext(calculationScale, calculationRoundingMode);
 
     public static SCalc<Double> doubleInstance() {
         return instanceFor(Double.class);
@@ -52,17 +58,33 @@ public class SCalc<RETURN_TYPE extends Number> {
         return this;
     }
 
-    public SCalc<RETURN_TYPE> scale(int scale) {
-        return scale(scale, RoundingMode.HALF_UP);
+    public SCalc<RETURN_TYPE> resultScale(int scale) {
+        return resultScale(scale, RoundingMode.HALF_UP);
     }
 
-    public SCalc<RETURN_TYPE> scale(int scale, RoundingMode roundingMode) {
-        this.scale = scale;
-        this.roundingMode = roundingMode;
+    public SCalc<RETURN_TYPE> resultScale(int scale, RoundingMode roundingMode) {
+        this.resultScale = scale;
+        this.resultRoundingMode = roundingMode;
+        this.resultMathContext = new MathContext(scale, roundingMode);
+        return this;
+    }
+
+    public SCalc<RETURN_TYPE> calculationScale(int scale) {
+        return calculationScale(scale, RoundingMode.HALF_UP);
+    }
+
+    public SCalc<RETURN_TYPE> calculationScale(int scale, RoundingMode roundingMode) {
+        this.calculationScale = scale;
+        this.calculationRoundingMode = roundingMode;
+        this.calculationMathContext = new MathContext(scale, roundingMode);
         return this;
     }
 
     public RETURN_TYPE calc() {
+        if (expression == null) {
+            throw new IllegalArgumentException("Expression cannot be empty.");
+        }
+
         return SimpleCalculator.calc(this);
     }
 
@@ -78,11 +100,27 @@ public class SCalc<RETURN_TYPE extends Number> {
         return params;
     }
 
-    public Integer getScale() {
-        return scale;
+    public int getResultScale() {
+        return resultScale;
     }
 
-    public RoundingMode getRoundingMode() {
-        return roundingMode;
+    public RoundingMode getResultRoundingMode() {
+        return resultRoundingMode;
+    }
+
+    public int getCalculationScale() {
+        return calculationScale;
+    }
+
+    public RoundingMode getCalculationRoundingMode() {
+        return calculationRoundingMode;
+    }
+
+    public MathContext getResultMathContext() {
+        return resultMathContext;
+    }
+
+    public MathContext getCalculationMathContext() {
+        return calculationMathContext;
     }
 }

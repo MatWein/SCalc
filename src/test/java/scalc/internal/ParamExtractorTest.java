@@ -23,7 +23,7 @@ public class ParamExtractorTest {
 
     @Test
     public void extractParamsInOrder_Operator() {
-        Map<String, Number> result = ParamExtractor.extractParamsInOrder(new Operator("*"));
+        Map<String, Number> result = ParamExtractor.extractParamsInOrder(Operator.MULTIPLICATION);
         Assert.assertTrue(result.isEmpty());
     }
 
@@ -42,9 +42,9 @@ public class ParamExtractorTest {
 
         List<Expression> expressions = new ArrayList<Expression>();
         expressions.add(new Variable(true, "var1"));
-        expressions.add(new Operator("+"));
+        expressions.add(Operator.ADDITION);
         expressions.add(new Variable(true, "var2"));
-        expressions.add(new Operator("*"));
+        expressions.add(Operator.MULTIPLICATION);
         expressions.add(new ComplexExpression("√(-c)", subExpressions));
 
         ComplexExpression complexExpression = new ComplexExpression("var1 + var2 * (√(-c))", expressions);
