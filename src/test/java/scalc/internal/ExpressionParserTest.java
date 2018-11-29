@@ -2,10 +2,7 @@ package scalc.internal;
 
 import org.junit.Assert;
 import org.junit.Test;
-import scalc.internal.expr.Constant;
-import scalc.internal.expr.Expression;
-import scalc.internal.expr.Function;
-import scalc.internal.expr.Variable;
+import scalc.internal.expr.*;
 
 import java.math.BigDecimal;
 
@@ -108,7 +105,7 @@ public class ExpressionParserTest {
         Assert.assertTrue(expression instanceof Function);
         Function function = (Function) expression;
 
-        Assert.assertFalse(function.isPositive());
+        Assert.assertTrue(function.isPositive());
         Assert.assertEquals("√", function.getName());
         Assert.assertEquals(2, function.getExpressions().size());
         Assert.assertTrue(function.getExpressions().get(0) instanceof Constant);
@@ -122,9 +119,23 @@ public class ExpressionParserTest {
         Assert.assertTrue(expression instanceof Function);
         Function function = (Function) expression;
 
-        Assert.assertFalse(function.isPositive());
+        Assert.assertTrue(function.isPositive());
         Assert.assertEquals("√", function.getName());
         Assert.assertEquals(1, function.getExpressions().size());
         Assert.assertTrue(function.getExpressions().get(0) instanceof Function);
+    }
+
+    @Test
+    public void parseComplextExpression_1() {
+        Expression expression = ExpressionParser.parse("a + b");
+
+        Assert.assertTrue(expression instanceof ComplexExpression);
+        ComplexExpression complexExpression = (ComplexExpression) expression;
+
+        Assert.assertEquals("a + b", complexExpression.getRawExpression());
+        Assert.assertEquals(3, complexExpression.getExpressions().size());
+        Assert.assertTrue(complexExpression.getExpressions().get(0) instanceof Variable);
+        Assert.assertTrue(complexExpression.getExpressions().get(1) instanceof Operator);
+        Assert.assertTrue(complexExpression.getExpressions().get(2) instanceof Variable);
     }
 }
