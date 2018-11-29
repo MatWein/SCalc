@@ -64,7 +64,7 @@ public class ExpressionParser {
         }
 
         Matcher functionMatcher = COMPILED_FUNCTION_PATTERN.matcher(expression);
-        if (functionMatcher.find()) {
+        if (functionMatcher.find() && expression.matches(FUNCTION_PATTERN)) {
             boolean negative = expression.startsWith("-");
             String name = functionMatcher.group(2);
             String innerExpression = functionMatcher.group(3);

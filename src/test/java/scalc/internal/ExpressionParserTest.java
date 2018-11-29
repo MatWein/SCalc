@@ -138,4 +138,20 @@ public class ExpressionParserTest {
         Assert.assertTrue(complexExpression.getExpressions().get(1) instanceof Operator);
         Assert.assertTrue(complexExpression.getExpressions().get(2) instanceof Variable);
     }
+
+    @Test
+    public void parseComplextExpression_2() {
+        Expression expression = ExpressionParser.parse("a + b * √(16)");
+
+        Assert.assertTrue(expression instanceof ComplexExpression);
+        ComplexExpression complexExpression = (ComplexExpression) expression;
+
+        Assert.assertEquals("a + b * √(16)", complexExpression.getRawExpression());
+        Assert.assertEquals(5, complexExpression.getExpressions().size());
+        Assert.assertTrue(complexExpression.getExpressions().get(0) instanceof Variable);
+        Assert.assertTrue(complexExpression.getExpressions().get(1) instanceof Operator);
+        Assert.assertTrue(complexExpression.getExpressions().get(2) instanceof Variable);
+        Assert.assertTrue(complexExpression.getExpressions().get(3) instanceof Operator);
+        Assert.assertTrue(complexExpression.getExpressions().get(4) instanceof Function);
+    }
 }

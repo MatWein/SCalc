@@ -4,24 +4,24 @@ import scalc.SCalc;
 import scalc.internal.expr.*;
 import scalc.internal.functions.FunctionImpl;
 import scalc.internal.functions.PowFunction;
+import scalc.internal.functions.SqrtFunction;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class SimpleCalculator {
     private static final Map<String, FunctionImpl> FUNCTIONS = getPredefinedFunctions();
 
     private static Map<String, FunctionImpl> getPredefinedFunctions() {
-        Map<String, FunctionImpl> functions = new HashMap<String, FunctionImpl>();
+        Map<String, FunctionImpl> functions = new TreeMap<String, FunctionImpl>(String.CASE_INSENSITIVE_ORDER);
 
-        PowFunction powFunction = new PowFunction();
-        functions.put("√", powFunction);
-        functions.put("wurzel", powFunction);
-        functions.put("pow", powFunction);
-        functions.put("sqrt", powFunction);
+        functions.put("√", PowFunction.INSTANCE);
+        functions.put("wurzel", PowFunction.INSTANCE);
+        functions.put("pow", PowFunction.INSTANCE);
+        functions.put("sqrt", SqrtFunction.INSTANCE);
         
         return functions;
     }
