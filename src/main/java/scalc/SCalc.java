@@ -3,6 +3,7 @@ package scalc;
 import scalc.internal.ExpressionParser;
 import scalc.internal.ParamExtractor;
 import scalc.internal.SimpleCalculator;
+import scalc.internal.converter.INumberConverter;
 import scalc.internal.expr.Expression;
 
 import java.math.BigDecimal;
@@ -11,16 +12,20 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SCalc<RETURN_TYPE extends Number> {
+public class SCalc<RETURN_TYPE> {
+    private static Map<Class<?>, INumberConverter> staticConverters = new HashMap<Class<?>, INumberConverter>();
+
     private final Class<RETURN_TYPE> returnType;
+
     private Expression expression;
     private Map<String, Number> params = new HashMap<String, Number>();
-    private int resultScale = 8;
+    private int resultScale = 10;
     private RoundingMode resultRoundingMode = RoundingMode.HALF_UP;
     private MathContext resultMathContext = new MathContext(resultScale, resultRoundingMode);
-    private int calculationScale = 8;
+    private int calculationScale = 10;
     private RoundingMode calculationRoundingMode = RoundingMode.HALF_UP;
     private MathContext calculationMathContext = new MathContext(calculationScale, calculationRoundingMode);
+    private Map<Class<?>, INumberConverter> converters = new HashMap<Class<?>, INumberConverter>(staticConverters);
 
     public static SCalc<Double> doubleInstance() {
         return instanceFor(Double.class);
@@ -30,8 +35,16 @@ public class SCalc<RETURN_TYPE extends Number> {
         return instanceFor(BigDecimal.class);
     }
 
-    public static <RETURN_TYPE extends Number> SCalc<RETURN_TYPE> instanceFor(Class<RETURN_TYPE> returnType) {
+    public static <RETURN_TYPE> SCalc<RETURN_TYPE> instanceFor(Class<RETURN_TYPE> returnType) {
         return new SCalc<RETURN_TYPE>(returnType);
+    }
+
+    public static void registerStaticConverters(Map<Class<?>, INumberConverter> converters) {
+        staticConverters.putAll(converters);
+    }
+
+    public static void registerStaticConverter(Class<?> type, INumberConverter converter) {
+        staticConverters.put(type, converter);
     }
 
     private SCalc(Class<RETURN_TYPE> returnType) {
@@ -43,18 +56,18 @@ public class SCalc<RETURN_TYPE extends Number> {
         return this;
     }
 
-    public SCalc<RETURN_TYPE> params(Map<String, Number> params) {
-        this.params = params;
+    public SCalc<RETURN_TYPE> params(Map<String, Object> params) {
+        this.params = ParamExtractor.extractParamsFromMap(this, params);
         return this;
     }
 
     public SCalc<RETURN_TYPE> params(Object... params) {
-        this.params = ParamExtractor.extractParamsFromNameValuePairs(expression, params);
+        this.params = ParamExtractor.extractParamsFromNameValuePairs(this, params);
         return this;
     }
 
-    public SCalc<RETURN_TYPE> paramsInOrder(Number... params) {
-        this.params = ParamExtractor.extractParamsInOrder(expression, params);
+    public SCalc<RETURN_TYPE> paramsInOrder(Object... params) {
+        this.params = ParamExtractor.extractParamsInOrder(this, expression, params);
         return this;
     }
 
@@ -77,6 +90,25 @@ public class SCalc<RETURN_TYPE extends Number> {
         this.calculationScale = scale;
         this.calculationRoundingMode = roundingMode;
         this.calculationMathContext = new MathContext(scale, roundingMode);
+        return this;
+    }
+
+    public SCalc<RETURN_TYPE> registerConverter(Class<?> type, Class<? extends INumberConverter> converterType) {
+        try {
+            this.converters.put(type, converterType.getConstructor().newInstance());
+        } catch (Throwable e) {
+            throw new RuntimeException(String.format("Number converter has no default constructur: %s", converterType.getName()));
+        }
+        return this;
+    }
+
+    public SCalc<RETURN_TYPE> registerConverters(Map<Class<?>, INumberConverter> converters) {
+        this.converters.putAll(converters);
+        return this;
+    }
+
+    public SCalc<RETURN_TYPE> registerConverter(Class<?> type, INumberConverter converter) {
+        this.converters.put(type, converter);
         return this;
     }
 
@@ -122,5 +154,9 @@ public class SCalc<RETURN_TYPE extends Number> {
 
     public MathContext getCalculationMathContext() {
         return calculationMathContext;
+    }
+
+    public Map<Class<?>, INumberConverter> getConverters() {
+        return converters;
     }
 }

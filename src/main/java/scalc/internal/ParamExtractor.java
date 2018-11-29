@@ -1,5 +1,7 @@
 package scalc.internal;
 
+import scalc.SCalc;
+import scalc.internal.converter.ToNumberConverter;
 import scalc.internal.expr.Expression;
 import scalc.internal.expr.ISubExpressions;
 import scalc.internal.expr.Variable;
@@ -7,32 +9,33 @@ import scalc.internal.expr.Variable;
 import java.util.*;
 
 public class ParamExtractor {
-    public static Map<String, Number> extractParamsInOrder(Expression expression, Number... params) {
+    public static Map<String, Number> extractParamsInOrder(SCalc<?> sCalc, Expression expression, Object... params) {
         Map<String, Number> result = new HashMap<String, Number>();
 
-        Queue<Number> paramsAsQueue = new LinkedList<Number>(Arrays.asList(params));
-        iterateExpression(result, expression, paramsAsQueue);
+        Queue<Object> paramsAsQueue = new LinkedList<Object>(Arrays.asList(params));
+        iterateExpression(sCalc, result, expression, paramsAsQueue);
 
         return result;
     }
 
     private static void iterateExpression(
+            SCalc<?> sCalc,
             Map<String, Number> result,
             Expression expression,
-            Queue<Number> paramsAsQueue) {
+            Queue<Object> paramsAsQueue) {
 
         if (expression instanceof Variable) {
-            Number polledNumber = paramsAsQueue.poll();
-            result.put(((Variable) expression).getName(), polledNumber);
+            Object polledNumber = paramsAsQueue.poll();
+            result.put(((Variable) expression).getName(), ToNumberConverter.toNumber(polledNumber, sCalc));
         } else if (expression instanceof ISubExpressions) {
             List<Expression> expressions = ((ISubExpressions) expression).getExpressions();
             for (Expression subExpression : expressions) {
-                iterateExpression(result, subExpression, paramsAsQueue);
+                iterateExpression(sCalc, result, subExpression, paramsAsQueue);
             }
         }
     }
 
-    public static Map<String, Number> extractParamsFromNameValuePairs(Object... params) {
+    public static Map<String, Number> extractParamsFromNameValuePairs(SCalc<?> sCalc, Object... params) {
         if (params == null || params.length == 0) {
             return new HashMap<String, Number>(0);
         }
@@ -50,14 +53,21 @@ public class ParamExtractor {
             }
 
             Object param2 = params[i + 1];
-            if (!(param2 instanceof Number)) {
-                throw new IllegalArgumentException(String.format("Invalid param value: '%s'. Has to be a number.", param2));
-            }
 
             String name = (String) param1;
-            Number value = (Number) param2;
+            Number value = ToNumberConverter.toNumber(param2, sCalc);
 
             result.put(name, value);
+        }
+
+        return result;
+    }
+
+    public static Map<String, Number> extractParamsFromMap(SCalc<?> sCalc, Map<String, Object> params) {
+        Map<String, Number> result = new HashMap<String, Number>();
+
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            result.put(entry.getKey(), ToNumberConverter.toNumber(entry.getValue(), sCalc));
         }
 
         return result;

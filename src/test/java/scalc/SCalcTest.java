@@ -2,6 +2,8 @@ package scalc;
 
 import org.junit.Assert;
 import org.junit.Test;
+import scalc.test.model.Money;
+import scalc.test.model.MoneyConverter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -11,7 +13,7 @@ import java.util.Map;
 public class SCalcTest {
     @Test
     public void calc_ComplexExpression_1() {
-        Map<String, Number> params = new HashMap<String, Number>();
+        Map<String, Object> params = new HashMap<String, Object>();
         params.put("a", 10);
         params.put("b", 2.1);
 
@@ -25,7 +27,7 @@ public class SCalcTest {
 
     @Test
     public void calc_ComplexExpression_2() {
-        Map<String, Number> params = new HashMap<String, Number>();
+        Map<String, Object> params = new HashMap<String, Object>();
         params.put("a", 10);
         params.put("b", 2);
 
@@ -49,7 +51,7 @@ public class SCalcTest {
 
     @Test
     public void calc_Variable() {
-        Map<String, Number> params = new HashMap<String, Number>();
+        Map<String, Object> params = new HashMap<String, Object>();
         params.put("someFancyVar1", 10);
 
         Double result = SCalc.doubleInstance()
@@ -62,7 +64,7 @@ public class SCalcTest {
 
     @Test
     public void calc_Function() {
-        Map<String, Number> params = new HashMap<String, Number>();
+        Map<String, Object> params = new HashMap<String, Object>();
         params.put("var1", 4);
 
         Double result = SCalc.doubleInstance()
@@ -71,5 +73,19 @@ public class SCalcTest {
                 .calc();
 
         Assert.assertEquals(2.0, result, 0);
+    }
+
+    @Test
+    public void calc_Money() {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("var1", 4);
+
+        Money result = SCalc.instanceFor(Money.class)
+                .expression("(pow(16, 3) + 2) / (99.99 - 79.99 - 16)")
+                .params(params)
+                .registerConverter(Money.class, MoneyConverter.class)
+                .calc();
+
+        Assert.assertEquals(1.0, result.getValue(), 0);
     }
 }

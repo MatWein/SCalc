@@ -84,7 +84,12 @@ public class ExpressionParser {
         return parseComplexExpression(expression);
     }
 
-    private static Expression parseComplexExpression(String expression) {
+    private static ComplexExpression parseComplexExpression(String expression) {
+        // TODO: parse braces
+        return parseComplexExpressionWithoutBraces(expression);
+    }
+
+    private static ComplexExpression parseComplexExpressionWithoutBraces(String expression) {
         List<Expression> expressions = new ArrayList<Expression>();
 
         String[] subExpressions = expression.split(OPERATOR_PATTERN);

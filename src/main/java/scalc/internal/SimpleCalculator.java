@@ -1,6 +1,8 @@
 package scalc.internal;
 
 import scalc.SCalc;
+import scalc.internal.converter.NumberTypeConverter;
+import scalc.internal.converter.ToNumberConverter;
 import scalc.internal.expr.*;
 import scalc.internal.functions.FunctionImpl;
 import scalc.internal.functions.PowFunction;
@@ -26,13 +28,13 @@ public class SimpleCalculator {
         return functions;
     }
 
-    public static <RETURN_TYPE extends Number> RETURN_TYPE calc(SCalc<RETURN_TYPE> sCalc) {
+    public static <RETURN_TYPE> RETURN_TYPE calc(SCalc<RETURN_TYPE> sCalc) {
         Expression expression = sCalc.getExpression();
 
         BigDecimal resolvedValue = resolveExpression(expression, sCalc);
         resolvedValue = resolvedValue.setScale(sCalc.getResultScale(), sCalc.getResultRoundingMode());
 
-        return NumberTypeConverter.convert(resolvedValue, sCalc.getReturnType());
+        return ToNumberConverter.toResultType(resolvedValue, sCalc);
     }
 
     private static BigDecimal resolveExpression(Expression expression, SCalc<?> sCalc) {

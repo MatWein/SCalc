@@ -1,4 +1,4 @@
-package scalc.internal;
+package scalc.internal.converter;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class NumberTypeConverterTest {
     public void convert() {
         BigDecimal result = NumberTypeConverter.convert(12.99, BigDecimal.class);
 
-        Assert.assertEquals(new BigDecimal(12.99), result);
+        Assert.assertEquals(new BigDecimal("12.99"), result);
     }
 
     @Test
