@@ -94,7 +94,7 @@ public class SCalcTest {
         params.put("var1", 4);
 
         Money result = SCalc.instanceFor(Money.class)
-                .expression("(pow(16, 3) + 2) / (99.99 - 79.99 - 16)")
+                .expression("(√(16, 3) + 2) / (99.99 - 79.99 - 16)")
                 .params(params)
                 .registerConverter(Money.class, MoneyConverter.class)
                 .calc();
