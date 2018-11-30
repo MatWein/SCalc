@@ -15,7 +15,7 @@ public class ExpressionParser {
     private static final String CONSTANT_PATTERN = "(" + SIGN_PATTERN + ")(" + "([0-9]+)|([0-9]+[.]?[0-9]+)" + ")";
     private static final String VARIABLE_PATTERN = "(" + SIGN_PATTERN + ")(" + NAME_PATTERN + ")";
 
-    private static final String OPERATOR_PATTERN = "((\\+)|(-)|(\\*)|(/))";
+    private static final String OPERATOR_PATTERN = "((\\+)|(-)|(\\*)|(/)|(\\^))";
     private static final Pattern COMPILED_OPERATOR_PATTERN = Pattern.compile(OPERATOR_PATTERN);
 
     private static final String FUNCTION_PATTERN = "(" + SIGN_PATTERN + ")(" + NAME_PATTERN + ")" + "\\((.*)\\)";
@@ -40,6 +40,8 @@ public class ExpressionParser {
                 return Operator.ADDITION;
             } else if (Operator.SUBTRACTION.getOperator().equals(expression)) {
                 return Operator.SUBTRACTION;
+            } else if (Operator.POW.getOperator().equals(expression)) {
+                return Operator.POW;
             } else {
                 throw new IllegalArgumentException(String.format("Cannot find operator for expression '%s'.", expression));
             }

@@ -5,8 +5,7 @@ import scalc.internal.converter.NumberTypeConverter;
 import scalc.internal.converter.ToNumberConverter;
 import scalc.internal.expr.*;
 import scalc.internal.functions.FunctionImpl;
-import scalc.internal.functions.PowFunction;
-import scalc.internal.functions.SqrtFunction;
+import scalc.internal.functions.RootFunction;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,10 +19,9 @@ public class SimpleCalculator {
     private static Map<String, FunctionImpl> getPredefinedFunctions() {
         Map<String, FunctionImpl> functions = new TreeMap<String, FunctionImpl>(String.CASE_INSENSITIVE_ORDER);
 
-        functions.put("√", PowFunction.INSTANCE);
-        functions.put("wurzel", PowFunction.INSTANCE);
-        functions.put("pow", PowFunction.INSTANCE);
-        functions.put("sqrt", SqrtFunction.INSTANCE);
+        functions.put("√", RootFunction.INSTANCE);
+        functions.put("wurzel", RootFunction.INSTANCE);
+        functions.put("sqrt", RootFunction.INSTANCE);
         
         return functions;
     }
@@ -71,6 +69,7 @@ public class SimpleCalculator {
         } else if (expression instanceof ComplexExpression) {
             List<Expression> subExpressions = ((ComplexExpression) expression).getExpressions();
 
+            processOperator(sCalc, subExpressions, Operator.POW);
             processOperator(sCalc, subExpressions, Operator.MULTIPLICATION);
             processOperator(sCalc, subExpressions, Operator.DIVISION);
             processOperator(sCalc, subExpressions, Operator.SUBTRACTION);

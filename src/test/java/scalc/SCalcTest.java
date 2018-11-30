@@ -74,6 +74,19 @@ public class SCalcTest {
 
         Assert.assertEquals(2.0, result, 0);
     }
+	
+	@Test
+	public void calc_Function_Pow() {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("var1", 4);
+		
+		Double result = SCalc.doubleInstance()
+				.expression("Wurzel(var1) ^ 3")
+				.params(params)
+				.calc();
+		
+		Assert.assertEquals(8.0, result, 0);
+	}
 
     @Test
     public void calc_Money() {

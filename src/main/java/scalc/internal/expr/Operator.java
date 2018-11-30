@@ -27,6 +27,11 @@ public class Operator extends Expression {
             return left.add(right, sCalc.getCalculationMathContext());
         }
     });
+	public static final Operator POW = new Operator("^", new IOperatorFunction() {
+		public BigDecimal calc(SCalc<?> sCalc, BigDecimal left, BigDecimal right) {
+			return left.pow(right.intValue(), sCalc.getCalculationMathContext());
+		}
+	});
 
     private final String operator;
     private final IOperatorFunction function;
