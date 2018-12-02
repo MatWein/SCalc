@@ -89,6 +89,37 @@ public class SCalcTest {
 	}
 
     @Test
+    public void calc_MultiplyAll() {
+        Double result = SCalc.doubleInstance()
+                .expression("*")
+                .paramsInOrder(2, 3, null, 4)
+                .calc();
+
+        Assert.assertEquals(24.0, result, 0);
+    }
+
+    @Test
+    public void calc_NotRemoveNullParameters() {
+        Double result = SCalc.doubleInstance()
+                .expression("*")
+                .paramsInOrder(2, 3, null, 4)
+                .removeNullParameters(false)
+                .calc();
+
+        Assert.assertEquals(0.0, result, 0);
+    }
+
+    @Test
+    public void calc_ParamNameValue() {
+        Double result = SCalc.doubleInstance()
+                .expression("-")
+                .paramsFromNameValuePairs("a", 10, "b", 100, "c", 20)
+                .calc();
+
+        Assert.assertEquals(-110.0, result, 0);
+    }
+
+    @Test
     public void calc_Money() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("var1", 4);
@@ -100,5 +131,14 @@ public class SCalcTest {
                 .calc();
 
         Assert.assertEquals(1.0, result.getValue(), 0);
+    }
+
+    @Test
+    public void calc_Pow() {
+        Double result = SCalc.doubleInstance()
+                .expression("Wurzel(4 ^ 2)")
+                .calc();
+
+        Assert.assertEquals(4.0, result, 0);
     }
 }

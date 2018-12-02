@@ -140,7 +140,7 @@ public class ExpressionParserTest {
     }
 
     @Test
-    public void parseComplextExpression_2() {
+    public void parseComplexExpression_2() {
         Expression expression = ExpressionParser.parse("a + b * √(16)");
 
         Assert.assertTrue(expression instanceof ComplexExpression);
@@ -153,5 +153,27 @@ public class ExpressionParserTest {
         Assert.assertTrue(complexExpression.getExpressions().get(2) instanceof Variable);
         Assert.assertTrue(complexExpression.getExpressions().get(3) instanceof Operator);
         Assert.assertTrue(complexExpression.getExpressions().get(4) instanceof Function);
+    }
+
+    @Test
+    public void parseComplexExpression_3() {
+        Expression expression = ExpressionParser.parse("10 * (7 - (a + b) / 2)");
+
+        Assert.assertTrue(expression instanceof ComplexExpression);
+        ComplexExpression complexExpression = (ComplexExpression) expression;
+
+        Assert.assertEquals("10 * (7 - (a + b) / 2)", complexExpression.getRawExpression());
+        Assert.assertEquals(3, complexExpression.getExpressions().size());
+        Assert.assertTrue(complexExpression.getExpressions().get(0) instanceof Constant);
+        Assert.assertTrue(complexExpression.getExpressions().get(1) instanceof Operator);
+
+        ComplexExpression expression2 = (ComplexExpression)complexExpression.getExpressions().get(2);
+        Assert.assertEquals("7 - (a + b) / 2", expression2.getRawExpression());
+        Assert.assertEquals(5, expression2.getExpressions().size());
+        Assert.assertTrue(expression2.getExpressions().get(0) instanceof Constant);
+        Assert.assertTrue(expression2.getExpressions().get(1) instanceof Operator);
+        Assert.assertTrue(expression2.getExpressions().get(2) instanceof ComplexExpression);
+        Assert.assertTrue(expression2.getExpressions().get(3) instanceof Operator);
+        Assert.assertTrue(expression2.getExpressions().get(4) instanceof Constant);
     }
 }

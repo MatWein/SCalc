@@ -7,6 +7,7 @@
     <groupId>scalc</groupId>
     <artifactId>scalc</artifactId>
     <version>1.0-SNAPSHOT</version>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

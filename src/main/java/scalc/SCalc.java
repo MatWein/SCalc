@@ -4,12 +4,14 @@ import scalc.internal.ExpressionParser;
 import scalc.internal.ParamExtractor;
 import scalc.internal.SimpleCalculator;
 import scalc.internal.converter.INumberConverter;
+import scalc.internal.converter.ToNumberConverter;
 import scalc.internal.expr.Expression;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SCalc<RETURN_TYPE> {
@@ -18,7 +20,7 @@ public class SCalc<RETURN_TYPE> {
     private final Class<RETURN_TYPE> returnType;
 
     private Expression expression;
-    private Map<String, Number> params = new HashMap<String, Number>();
+    private Map<String, Number> params = new LinkedHashMap<String, Number>();
     private int resultScale = 10;
     private RoundingMode resultRoundingMode = RoundingMode.HALF_UP;
     private MathContext resultMathContext = new MathContext(resultScale, resultRoundingMode);
@@ -26,6 +28,7 @@ public class SCalc<RETURN_TYPE> {
     private RoundingMode calculationRoundingMode = RoundingMode.HALF_UP;
     private MathContext calculationMathContext = new MathContext(calculationScale, calculationRoundingMode);
     private Map<Class<?>, INumberConverter> converters = new HashMap<Class<?>, INumberConverter>(staticConverters);
+    private boolean removeNullParameters = true;
 
     public static SCalc<Double> doubleInstance() {
         return instanceFor(Double.class);
@@ -61,13 +64,23 @@ public class SCalc<RETURN_TYPE> {
         return this;
     }
 
-    public SCalc<RETURN_TYPE> params(Object... params) {
+    public SCalc<RETURN_TYPE> paramsFromNameValuePairs(Object... params) {
         this.params = ParamExtractor.extractParamsFromNameValuePairs(this, params);
         return this;
     }
 
     public SCalc<RETURN_TYPE> paramsInOrder(Object... params) {
         this.params = ParamExtractor.extractParamsInOrder(this, expression, params);
+        return this;
+    }
+
+    public SCalc<RETURN_TYPE> parameter(String name, Object value) {
+        this.params.put(name, ToNumberConverter.toNumber(value, this));
+        return this;
+    }
+
+    public SCalc<RETURN_TYPE> removeNullParameters(boolean removeNullParameters) {
+        this.removeNullParameters = removeNullParameters;
         return this;
     }
 
@@ -117,6 +130,10 @@ public class SCalc<RETURN_TYPE> {
             throw new IllegalArgumentException("Expression cannot be empty.");
         }
 
+        if (removeNullParameters) {
+            while (params.values().remove(null)) {}
+        }
+
         return SimpleCalculator.calc(this);
     }
 
@@ -158,5 +175,9 @@ public class SCalc<RETURN_TYPE> {
 
     public Map<Class<?>, INumberConverter> getConverters() {
         return converters;
+    }
+
+    public boolean isRemoveNullParameters() {
+        return removeNullParameters;
     }
 }

@@ -8,10 +8,7 @@ import scalc.internal.functions.FunctionImpl;
 import scalc.internal.functions.RootFunction;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class SimpleCalculator {
     private static final Map<String, FunctionImpl> FUNCTIONS = getPredefinedFunctions();
@@ -67,7 +64,7 @@ public class SimpleCalculator {
 
             return callFunction(functionName, functionParams);
         } else if (expression instanceof ComplexExpression) {
-            List<Expression> subExpressions = ((ComplexExpression) expression).getExpressions();
+            List<Expression> subExpressions = new ArrayList<Expression>(((ComplexExpression) expression).getExpressions());
 
             processOperator(sCalc, subExpressions, Operator.POW);
             processOperator(sCalc, subExpressions, Operator.MULTIPLICATION);
@@ -76,6 +73,22 @@ public class SimpleCalculator {
             processOperator(sCalc, subExpressions, Operator.ADDITION);
 
             return (BigDecimal)(((Constant)subExpressions.get(0)).getValue());
+        } else if (expression instanceof Operator) {
+            if (params.size() == 0) {
+                return new BigDecimal(0.0);
+            }
+
+            Operator operator = (Operator)expression;
+            LinkedList<Number> paramsAsQueue = new LinkedList<Number>(params.values());
+
+            BigDecimal result = NumberTypeConverter.convert(paramsAsQueue.poll(), BigDecimal.class);
+
+            while (!paramsAsQueue.isEmpty()) {
+                BigDecimal nextElement = NumberTypeConverter.convert(paramsAsQueue.poll(), BigDecimal.class);
+                result = operator.getFunction().calc(sCalc, result, nextElement);
+            }
+
+            return result;
         }
 
         throw new IllegalArgumentException(String.format("Cannot calculate value for expression: %s", expression));

@@ -15,6 +15,10 @@ public class ParamExtractor {
         Queue<Object> paramsAsQueue = new LinkedList<Object>(Arrays.asList(params));
         iterateExpression(sCalc, result, expression, paramsAsQueue);
 
+        for (Object remainingParam : paramsAsQueue) {
+            result.put(UUID.randomUUID().toString().replace("-", ""), ToNumberConverter.toNumber(remainingParam, sCalc));
+        }
+
         return result;
     }
 
