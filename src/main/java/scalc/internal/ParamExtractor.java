@@ -76,4 +76,10 @@ public class ParamExtractor {
 
         return result;
     }
+
+    public static void postProcessParams(SCalc<?> sCalc) {
+        if (sCalc.isRemoveNullParameters()) {
+            while (sCalc.getParams().values().remove(null)) {}
+        }
+    }
 }

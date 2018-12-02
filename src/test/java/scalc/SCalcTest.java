@@ -110,6 +110,39 @@ public class SCalcTest {
     }
 
     @Test
+    public void calc_PowAll() {
+        Double result = SCalc.doubleInstance()
+                .expression("^")
+                .paramsInOrder(2, 3, 2)
+                .calc();
+
+        Assert.assertEquals(64.0, result, 0);
+    }
+
+    @Test
+    public void calc_Performance() {
+        long timeStart = System.currentTimeMillis();
+        SCalc<Double> sCalc = SCalc.doubleInstance()
+                .expression("a^b");
+        long timeEnd = System.currentTimeMillis();
+
+        System.out.println(String.format("Time needed for expression parsing: %sms.", timeEnd - timeStart));
+
+        Double result = 0.0;
+        timeStart = System.currentTimeMillis();
+        for (int i = 0; i < 100000; i++) {
+            result = sCalc
+                    .parameter("a", 10)
+                    .parameter("b", 2)
+                    .calc();
+        }
+        timeEnd = System.currentTimeMillis();
+
+        Assert.assertEquals(100.0, result, 0);
+        System.out.println(String.format("Time needed for calculation: %sms.", timeEnd - timeStart));
+    }
+
+    @Test
     public void calc_ParamNameValue() {
         Double result = SCalc.doubleInstance()
                 .expression("-")

@@ -83,7 +83,15 @@ public class ExpressionParser {
             return new Function(!negative, expression, name, subExpressions);
         }
 
-        return parseComplexExpressionWithoutBracket(expression);
+        return parseComplexExpression(expression);
+    }
+
+    /*
+        f(x)=10 + (x * 2) - 1;
+        return f(2);
+     */
+    private static ComplexExpression parseComplexExpression(String expression) {
+
     }
 
     private static ComplexExpression parseComplexExpressionWithoutBracket(String expression) {

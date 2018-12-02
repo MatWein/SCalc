@@ -20,6 +20,7 @@ public class SCalc<RETURN_TYPE> {
     private final Class<RETURN_TYPE> returnType;
 
     private Expression expression;
+    private String rawExpression;
     private Map<String, Number> params = new LinkedHashMap<String, Number>();
     private int resultScale = 10;
     private RoundingMode resultRoundingMode = RoundingMode.HALF_UP;
@@ -56,31 +57,37 @@ public class SCalc<RETURN_TYPE> {
 
     public SCalc<RETURN_TYPE> expression(String expression) {
         this.expression = ExpressionParser.parse(expression);
+        this.rawExpression = expression;
         return this;
     }
 
     public SCalc<RETURN_TYPE> params(Map<String, Object> params) {
         this.params = ParamExtractor.extractParamsFromMap(this, params);
+        ParamExtractor.postProcessParams(this);
         return this;
     }
 
     public SCalc<RETURN_TYPE> paramsFromNameValuePairs(Object... params) {
         this.params = ParamExtractor.extractParamsFromNameValuePairs(this, params);
+        ParamExtractor.postProcessParams(this);
         return this;
     }
 
     public SCalc<RETURN_TYPE> paramsInOrder(Object... params) {
         this.params = ParamExtractor.extractParamsInOrder(this, expression, params);
+        ParamExtractor.postProcessParams(this);
         return this;
     }
 
     public SCalc<RETURN_TYPE> parameter(String name, Object value) {
         this.params.put(name, ToNumberConverter.toNumber(value, this));
+        ParamExtractor.postProcessParams(this);
         return this;
     }
 
     public SCalc<RETURN_TYPE> removeNullParameters(boolean removeNullParameters) {
         this.removeNullParameters = removeNullParameters;
+        ParamExtractor.postProcessParams(this);
         return this;
     }
 
@@ -128,10 +135,6 @@ public class SCalc<RETURN_TYPE> {
     public RETURN_TYPE calc() {
         if (expression == null) {
             throw new IllegalArgumentException("Expression cannot be empty.");
-        }
-
-        if (removeNullParameters) {
-            while (params.values().remove(null)) {}
         }
 
         return SimpleCalculator.calc(this);
