@@ -164,7 +164,7 @@ public class SCalcController {
     }
 
     private static String paramToString(Number param) {
-        return NumberTypeConverter.convert(param, BigDecimal.class).toString();
+        return NumberTypeConverter.convert(param, BigDecimal.class).toPlainString();
     }
 
     private static String replaceWord(String value, String wordToReplace, String newValue) {

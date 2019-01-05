@@ -337,4 +337,16 @@ public class SCalcTest {
         Assert.assertEquals(0.8, result, 0);
         Assert.assertEquals(0.8, 0.9 - 0.1, 0);
     }
+
+    @Test
+    public void calc_0E10() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("a+b")
+                .parameter("a", new BigDecimal("0E-10"))
+                .parameter("b", 5)
+                .build()
+                .calc();
+
+        Assert.assertEquals(5.0, result, 0);
+    }
 }
