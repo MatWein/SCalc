@@ -316,4 +316,25 @@ public class SCalcTest {
 
         Assert.assertEquals(4.14, result, 0);
     }
+
+    @Test
+    public void calc_FloatingPoint1() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("a+b")
+                .parameter("a", 0.7)
+                .parameter("b", 0.1)
+                .build()
+                .calc();
+
+        Assert.assertEquals(0.8, result, 0);
+        Assert.assertEquals(0.7999999999999999, 0.7 + 0.1, 0);
+
+        result = SCalcBuilder.doubleInstance()
+                .expression("0.9 - 0.1")
+                .build()
+                .calc();
+
+        Assert.assertEquals(0.8, result, 0);
+        Assert.assertEquals(0.8, 0.9 - 0.1, 0);
+    }
 }
