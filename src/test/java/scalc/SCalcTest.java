@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class SCalcTest {
     @Test
-    public void calc_ComplexExpression_1() {
+    public void calc_SimpleExpression_1() {
         Map<String, Object> params = new HashMap<>();
         params.put("a", 10);
         params.put("b", 2.1);
@@ -25,6 +25,30 @@ public class SCalcTest {
                 .calc();
 
         Assert.assertEquals(12.1, result, 0);
+    }
+
+    @Test
+    public void calc_SimpleExpression_2() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("a + b - c")
+                .parameter("a", 10)
+                .parameter("b", 5)
+                .parameter("c", 15)
+                .build()
+                .calc();
+
+        Assert.assertEquals(0.0, result, 0);
+    }
+
+    @Test
+    public void calc_BigDecimal() {
+        BigDecimal result = SCalcBuilder.bigDecimalInstance()
+                .expression("4 * 4 - var1")
+                .parameter("var1", new BigDecimal(2))
+                .build()
+                .calc();
+
+        Assert.assertEquals(14.0, result.doubleValue(), 0);
     }
 
     @Test
@@ -165,6 +189,19 @@ public class SCalcTest {
                 .calc();
 
         Assert.assertEquals(1.0, result.getValue(), 0);
+    }
+
+    @Test
+    public void calc_Money_Global() {
+        SCalcBuilder.registerGlobalConverter(Money.class, MoneyConverter.class);
+
+        Money result = SCalcBuilder.instanceFor(Money.class)
+                .expression("var1 - var2")
+                .params("var1", 10.9, "var2", 0.9)
+                .build()
+                .calc();
+
+        Assert.assertEquals(10.0, result.getValue(), 0);
     }
 
     @Test

@@ -10,7 +10,7 @@ public class SCalc<RETURN_TYPE> {
         this.options = options;
     }
 
-    public RETURN_TYPE calc() {
+    public RETURN_TYPE calc() throws CalculationException {
         try {
             return SCalcController.calc(this);
         } catch (CalculationException e) {

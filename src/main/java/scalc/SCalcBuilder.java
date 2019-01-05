@@ -31,12 +31,20 @@ public class SCalcBuilder<RETURN_TYPE> {
         return new SCalcBuilder<>(returnType);
     }
 
-    public static void registerStaticConverters(Map<Class<?>, INumberConverter> converters) {
+    public static void registerGlobalConverters(Map<Class<?>, INumberConverter> converters) {
         staticConverters.putAll(converters);
     }
 
-    public static void registerStaticConverter(Class<?> type, INumberConverter converter) {
+    public static void registerGlobalConverter(Class<?> type, INumberConverter converter) {
         staticConverters.put(type, converter);
+    }
+
+    public static void registerGlobalConverter(Class<?> type, Class<? extends INumberConverter> converter) {
+        try {
+            staticConverters.put(type, converter.getConstructor().newInstance());
+        } catch (Throwable e) {
+            throw new CalculationException(String.format("Number converter has no default constructur: %s", converter.getName()));
+        }
     }
 
     private SCalcBuilder(Class<RETURN_TYPE> returnType) {
