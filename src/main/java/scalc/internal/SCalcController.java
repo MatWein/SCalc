@@ -2,6 +2,7 @@ package scalc.internal;
 
 import scalc.SCalc;
 import scalc.SCalcOptions;
+import scalc.internal.converter.NumberTypeConverter;
 import scalc.internal.converter.ToNumberConverter;
 
 import java.math.BigDecimal;
@@ -26,7 +27,7 @@ public class SCalcController {
     private static <RETURN_TYPE> String resolveExpression(SCalcOptions<RETURN_TYPE> options) {
         String expression = options.getExpression();
         for (Entry<String, Number> param : options.getParams().entrySet()) {
-            String number = param.getValue() == null ? "0" : param.getValue().toString();
+            String number = param.getValue() == null ? "0" : NumberTypeConverter.convert(param.getValue(), BigDecimal.class).toString();
             expression = expression.replaceAll("\\b" + param.getKey() + "\\b", number);
         }
 

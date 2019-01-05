@@ -19,7 +19,7 @@ public class RootFunction implements FunctionImpl {
 	        return calc(options, value, root);
         }
 	
-	    throw new IllegalArgumentException(String.format("Function '%s' has to have at least one argument.", getClass().getSimpleName()));
+	    throw new IllegalArgumentException(String.format("Function '%s' has to have at least one argument and max. 2 arguments. Format: √(base, [default=2] power). Example: √(16) or √(16, 4)", getClass().getSimpleName()));
     }
 	
 	private BigDecimal calc(SCalcOptions<?> options, BigDecimal value, BigDecimal root) {

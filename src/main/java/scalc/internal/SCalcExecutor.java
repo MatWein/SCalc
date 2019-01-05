@@ -84,14 +84,15 @@ public class SCalcExecutor<RETURN_TYPE> {
 
         BigDecimal x;
         int startPos = this.pos;
+
         if (eat('(')) {
             x = parseExpression();
             eat(')');
         } else if (calculateIsValidNumberChar()) {
             while (calculateIsValidNumberChar()) nextChar();
             x = new BigDecimal(expression.substring(startPos, this.pos), options.getCalculationMathContext());
-        } else if (calculateIsValidFunctionChar()) {
-            while (calculateIsValidFunctionChar()) nextChar();
+        } else if (Functions.calculateIsValidFunctionChar(currentChar)) {
+            while (Functions.calculateIsValidFunctionChar(currentChar)) nextChar();
             String func = expression.substring(startPos, this.pos);
             List<BigDecimal> factors = parseFactors();
             eat(')');
@@ -135,15 +136,12 @@ public class SCalcExecutor<RETURN_TYPE> {
             nextChar();
             return true;
         }
+
         return false;
     }
 
     private boolean calculateIsValidNumberChar() {
         return (currentChar >= '0' && currentChar <= '9') || currentChar == '.';
-    }
-
-    private boolean calculateIsValidFunctionChar() {
-        return (currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= 'a' && currentChar <= 'z') || currentChar == '√';
     }
 
     private boolean isValidWhitespace() {

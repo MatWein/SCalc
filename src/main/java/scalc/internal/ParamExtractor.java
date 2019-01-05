@@ -3,7 +3,6 @@ package scalc.internal;
 import scalc.internal.converter.INumberConverter;
 import scalc.internal.converter.ToNumberConverter;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -40,7 +39,7 @@ public class ParamExtractor {
     }
 
     private static Map<String, Number> extractParamsWithRandomName(Map<Class<?>, INumberConverter> converters, Object[] paramsAsArray) {
-        Map<String, Number> result = new HashMap<>();
+        Map<String, Number> result = new LinkedHashMap<>();
 
         for (Object param : paramsAsArray) {
             Number value = ToNumberConverter.toNumber(param, converters);
@@ -55,7 +54,7 @@ public class ParamExtractor {
             throw new IllegalArgumentException("Params have to be in form: name,value,name2,value2,...");
         }
 
-        Map<String, Number> result = new HashMap<>(params.length / 2);
+        Map<String, Number> result = new LinkedHashMap<>(params.length / 2);
 
         for (int i = 0; i < params.length; i += 2) {
             Object param1 = params[i];

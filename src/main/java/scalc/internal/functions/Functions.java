@@ -15,4 +15,8 @@ public class Functions {
 
         return functions;
     }
+
+    public static boolean calculateIsValidFunctionChar(char currentChar) {
+        return (currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= 'a' && currentChar <= 'z') || currentChar == '√';
+    }
 }
