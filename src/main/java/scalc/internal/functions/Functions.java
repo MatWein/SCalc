@@ -20,6 +20,13 @@ public class Functions {
         functions.put("sum", SumFunction.INSTANCE);
         functions.put("summe", SumFunction.INSTANCE);
 
+        functions.put("avg", AvgFunction.INSTANCE);
+        functions.put("durchschnitt", AvgFunction.INSTANCE);
+
+        functions.put("max", MaxFunction.INSTANCE);
+        functions.put("min", MinFunction.INSTANCE);
+        functions.put("abs", AbsFunction.INSTANCE);
+
         return functions;
     }
 

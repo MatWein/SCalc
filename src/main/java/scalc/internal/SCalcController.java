@@ -139,6 +139,9 @@ public class SCalcController {
             expression = replaceWord(expression, entry.getKey(), entry.getValue().toString());
         }
 
+        expression = expression.replace("²", "^2");
+        expression = expression.replace("³", "^3");
+
         return expression;
     }
 

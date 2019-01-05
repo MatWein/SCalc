@@ -395,4 +395,102 @@ public class SCalcTest {
 
         Assert.assertEquals(17.1, result, 0);
     }
+
+    @Test
+    public void calc_PowChar() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("a² / b³")
+                .params("a", 3, "b", 2)
+                .build()
+                .calc();
+
+        Assert.assertEquals(1.125, result, 0);
+    }
+
+    @Test
+    public void calc_Min() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("min(16, 4, 24, 1)")
+                .build()
+                .calc();
+
+        Assert.assertEquals(1.0, result, 0);
+    }
+
+    @Test
+    public void calc_Min2() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("min(16, -4, 24, 1)")
+                .build()
+                .calc();
+
+        Assert.assertEquals(-4.0, result, 0);
+    }
+
+    @Test
+    public void calc_Min3() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("-min(16, -4 / 2, 24, 1)")
+                .build()
+                .calc();
+
+        Assert.assertEquals(2.0, result, 0);
+    }
+
+    @Test
+    public void calc_Max() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("max(16, 4, 24, 1)")
+                .build()
+                .calc();
+
+        Assert.assertEquals(24.0, result, 0);
+    }
+
+    @Test
+    public void calc_Avg() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("avg(16, 4, 24, 1)")
+                .build()
+                .calc();
+
+        Assert.assertEquals(11.25, result, 0);
+    }
+
+    @Test
+    public void calc_Abs() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("abs(16)")
+                .build()
+                .calc();
+
+        Assert.assertEquals(16.0, result, 0);
+    }
+
+    @Test
+    public void calc_Abs2() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("abs(-16)")
+                .build()
+                .calc();
+
+        Assert.assertEquals(16.0, result, 0);
+    }
+
+    @Test
+    public void calc_MultiLineCalculation() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression(
+                    "umsatzProMonat = 50000;" +
+                    "umsatzProJahr = umsatzProMonat * 12;" +
+                    "kostenProMonat = 2000;" +
+                    "kostenProJahr = kostenProMonat * 12;" +
+                    "gewinnProJahr = umsatzProJahr - kostenProJahr;" +
+                    "return gewinnProJahr;"
+                )
+                .build()
+                .calc();
+
+        Assert.assertEquals(576000.0, result, 0);
+    }
 }

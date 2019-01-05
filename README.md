@@ -78,7 +78,20 @@ example: √(16) = 4, Root(16, 4) = 2
 - sum(...)  
 description: Calculates the sum of all given parameters. May be empty.  
 aliases: ∑, summe  
-example: ∑(16) = 16, Summe(16, 4) = 20, sum() = 0
+example: ∑(16) = 16, Summe(16, 4) = 20, sum() = 0  
+- max(...)  
+description: Returns the maximum number of all given parameters.  
+example: max(16, 4, 24, 1) = 24  
+- min(...)  
+description: Returns the minimum number of all given parameters.  
+example: max(16, 4, 24, 1) = 1  
+- avg(...)  
+description: Returns the maximum number of all given parameters.  
+aliases: durchschnitt  
+example: avg(16, 4, 24, 1) = 11.25  
+- abs(value)  
+description: Returns the absolute number of the given parameter.  
+example: abs(-16) = 16  
 
 ### Constants
 - PI  
@@ -121,6 +134,14 @@ BigDecimal result = SCalcBuilder.bigDecimalInstance()
     .calc();
 ```
 Result will be 18.
+
+You can also use pow chars in your expressions:
+```
+BigDecimal result = SCalcBuilder.bigDecimalInstance()
+    .expression("3² + 2³")
+    .build()
+    .calc();
+```
 
 ### Definition expressions
 This is the most complex and powerful kind of expression. You can enter multiple lines separated with a semicolon. Each line contains a function or varible definition/assignment. At the end you have to write a return statement to calculate the result:

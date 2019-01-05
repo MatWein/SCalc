@@ -82,7 +82,8 @@ public class SCalcExecutor {
                 eat('(');
                 eat(')');
             } else {
-                factors = parseFactors();
+                eat('(');
+                factors = parseExpressions();
                 eat(')');
             }
 
@@ -108,14 +109,14 @@ public class SCalcExecutor {
         return new BigDecimal(Math.pow(value.doubleValue(), power.doubleValue()), mathContext);
     }
 
-    private List<BigDecimal> parseFactors() {
-        List<BigDecimal> factors = new ArrayList<>();
+    private List<BigDecimal> parseExpressions() {
+        List<BigDecimal> expressions = new ArrayList<>();
 
         do {
-            factors.add(parseFactor());
+            expressions.add(parseExpression());
         } while (eat(','));
 
-        return factors;
+        return expressions;
     }
 
     private void nextChar() {
