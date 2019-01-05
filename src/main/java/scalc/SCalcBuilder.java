@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Builder class for the SCalc calculator.
+ */
 public class SCalcBuilder<RETURN_TYPE> {
     private static Map<Class<?>, INumberConverter> staticConverters = new HashMap<>();
 
@@ -19,26 +22,54 @@ public class SCalcBuilder<RETURN_TYPE> {
     private Object[] paramsAsArray;
     private Map<Class<?>, INumberConverter> customConverters = new HashMap<>();
 
+    /**
+     * Use this method to get a new builder. All calculation results will be returned as double.
+     */
     public static SCalcBuilder<Double> doubleInstance() {
         return instanceFor(Double.class);
     }
 
+    /**
+     * Use this method to get a new builder. All calculation results will be returned as BigDecimal.
+     */
     public static SCalcBuilder<BigDecimal> bigDecimalInstance() {
         return instanceFor(BigDecimal.class);
     }
 
+    /**
+     * Use this method to get a new builder. All calculation results will be returned in the given type, if the type is known or you have specified a custom converter for this type.
+     * @param returnType Class<? extends Number> or custom type.
+     */
     public static <RETURN_TYPE> SCalcBuilder<RETURN_TYPE> instanceFor(Class<RETURN_TYPE> returnType) {
         return new SCalcBuilder<>(returnType);
     }
 
+    /**
+     * Register multiple global type converters for calculation results and parameters.<br/>
+     * Attention: This will affect ALL instances of SCalc!
+     * @param converters Map of all converter instances to register. Already existing ones will be overridden.
+     */
     public static void registerGlobalConverters(Map<Class<?>, INumberConverter> converters) {
         staticConverters.putAll(converters);
     }
 
+    /**
+     * Register a global type converter for calculation results and parameters.<br/>
+     * Attention: This will affect ALL instances of SCalc!
+     * @param type Number type of the given converter
+     * @param converter Converter instance to register. Already existing ones will be overridden.
+     */
     public static void registerGlobalConverter(Class<?> type, INumberConverter converter) {
         staticConverters.put(type, converter);
     }
 
+    /**
+     * Register a global type converter for calculation results and parameters.<br/>
+     * Your converter class has to have a default constructor to use this method!<br/>
+     * Attention: This will affect ALL instances of SCalc!
+     * @param type Number type of the given converter
+     * @param converter Converter class to register. Already existing ones will be overridden.
+     */
     public static void registerGlobalConverter(Class<?> type, Class<? extends INumberConverter> converter) {
         try {
             staticConverters.put(type, converter.getConstructor().newInstance());
@@ -51,35 +82,73 @@ public class SCalcBuilder<RETURN_TYPE> {
         this.options.setReturnType(returnType);
     }
 
+    /**
+     * [REQUIRED] Expression to parse. For further details see documentation.
+     * @param rawExpression Single operator expression, standard expression or definition expression
+     */
     public SCalcBuilder<RETURN_TYPE> expression(String rawExpression) {
         this.options.setExpression(rawExpression);
         return this;
     }
 
+    /**
+     * [OPTIONAL] Map of named parameters to use for calculation. Optional if the expression does not have any params.
+     * @param params Params for calculation
+     */
     public SCalcBuilder<RETURN_TYPE> params(Map<String, Object> params) {
         this.params.putAll(params);
         return this;
     }
 
+    /**
+     * [OPTIONAL] Parameters in form of: <br/>
+     * - "name1", 10, "name2", 5, ...<br/>
+     * or<br/>
+     * - 10, 20, 30, ...<br/>
+     * Optional if the expression does not have any params.
+     * @param params Params for calculation
+     */
     public SCalcBuilder<RETURN_TYPE> params(Object... params) {
         this.paramsAsArray = params;
         return this;
     }
 
+    /**
+     * [OPTIONAL] Single parameter for calculation. Can be used multiple times to add more than one param.
+     * Optional if the expression does not have any params.
+     * @param name Name of the param
+     * @param value Value of the param as java.lang.Number or custom type.
+     */
     public SCalcBuilder<RETURN_TYPE> parameter(String name, Object value) {
         this.params.put(name, value);
         return this;
     }
 
+    /**
+     * [OPTIONAL] Specifies if null parameters are ignored. If false then null will be interpreted as 0.0.<br/>
+     * Default: true
+     * @param removeNullParameters true if you want to ignore null values
+     */
     public SCalcBuilder<RETURN_TYPE> removeNullParameters(boolean removeNullParameters) {
         this.options.setRemoveNullParameters(removeNullParameters);
         return this;
     }
 
+    /**
+     * [OPTIONAL] Specifies the scale of the result. This scale will only be used for rounding the result number. Internal calculation can use another scale!<br/>
+     * Default: 10
+     * @param scale Scale to use for the result and only for the result
+     */
     public SCalcBuilder<RETURN_TYPE> resultScale(int scale) {
         return resultScale(scale, RoundingMode.HALF_UP);
     }
 
+    /**
+     * [OPTIONAL] Specifies the scale of the result. This scale will only be used for rounding the result number. Internal calculation can use another scale!<br/>
+     * Default: 10, HALP_UP
+     * @param scale Scale to use for the result and only for the result
+     * @param roundingMode Rounding mode to use for the result
+     */
     public SCalcBuilder<RETURN_TYPE> resultScale(int scale, RoundingMode roundingMode) {
         this.options.setResultScale(scale);
         this.options.setResultRoundingMode(roundingMode);
@@ -87,10 +156,21 @@ public class SCalcBuilder<RETURN_TYPE> {
         return this;
     }
 
+    /**
+     * [OPTIONAL] Specifies the scale used for the calculation. This scale will not be used for rounding the result number!<br/>
+     * Default: 10
+     * @param scale Scale to use for the calculation and only for the calculation
+     */
     public SCalcBuilder<RETURN_TYPE> calculationScale(int scale) {
         return calculationScale(scale, RoundingMode.HALF_UP);
     }
 
+    /**
+     * [OPTIONAL] Specifies the scale used for the calculation. This scale will not be used for rounding the result number!<br/>
+     * Default: 10
+     * @param scale Scale to use for the calculation and only for the calculation
+     * @param roundingMode Rounding mode to use for the calculation
+     */
     public SCalcBuilder<RETURN_TYPE> calculationScale(int scale, RoundingMode roundingMode) {
         this.options.setCalculationScale(scale);
         this.options.setCalculationRoundingMode(roundingMode);
@@ -98,6 +178,13 @@ public class SCalcBuilder<RETURN_TYPE> {
         return this;
     }
 
+    /**
+     * Register a local type converter for calculation results and parameters.<br/>
+     * Your converter class has to have a default constructor to use this method!<br/>
+     * This will only affect the current instance of SCalc.
+     * @param type Number type of the given converter
+     * @param converterType Converter class to register. Already existing ones will be overridden.
+     */
     public SCalcBuilder<RETURN_TYPE> registerConverter(Class<?> type, Class<? extends INumberConverter> converterType) {
         try {
             this.customConverters.put(type, converterType.getConstructor().newInstance());
@@ -107,16 +194,31 @@ public class SCalcBuilder<RETURN_TYPE> {
         return this;
     }
 
+    /**
+     * Register multiple local type converters for calculation results and parameters.<br/>
+     * This will only affect the current instance of SCalc.
+     * @param converters Map with converter instances
+     */
     public SCalcBuilder<RETURN_TYPE> registerConverters(Map<Class<?>, INumberConverter> converters) {
         this.customConverters.putAll(converters);
         return this;
     }
 
+    /**
+     * Register a local type converter for calculation results and parameters.<br/>
+     * This will only affect the current instance of SCalc.
+     * @param type Number type of the given converter
+     * @param converter Converter instance to register. Already existing ones will be overridden.
+     */
     public SCalcBuilder<RETURN_TYPE> registerConverter(Class<?> type, INumberConverter converter) {
         this.customConverters.put(type, converter);
         return this;
     }
 
+    /**
+     * After setting all options for the builder, you can call this method to create a new instance of SCalc.
+     * @return A new calculator with the given options.
+     */
     public SCalc<RETURN_TYPE> build() {
         Map<Class<?>, INumberConverter> converters = new HashMap<>();
         converters.putAll(staticConverters);

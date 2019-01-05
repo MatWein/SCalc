@@ -3,6 +3,7 @@ package scalc.internal;
 import scalc.SCalc;
 import scalc.SCalcOptions;
 import scalc.exceptions.CalculationException;
+import scalc.internal.constants.Constants;
 import scalc.internal.converter.NumberTypeConverter;
 import scalc.internal.converter.ToNumberConverter;
 import scalc.internal.functions.FunctionImpl;
@@ -132,9 +133,11 @@ public class SCalcController {
     }
 
     private static String replaceGlobalConstants(MathContext mathContext, String expression) {
-        String pi = new BigDecimal(Math.PI, mathContext).toString();
-        expression = replaceWord(expression, "PI", pi);
-        expression = replaceWord(expression, "π", pi);
+        Map<String, Number> constants = Constants.getPredefinedConstants(mathContext);
+
+        for (Entry<String, Number> entry : constants.entrySet()) {
+            expression = replaceWord(expression, entry.getKey(), entry.getValue().toString());
+        }
 
         return expression;
     }

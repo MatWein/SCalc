@@ -7,7 +7,7 @@ Internal calculation will be performed with BigDecimal's to avoid floating point
 ## Maven
 SCalc is available as maven dependency:
 ```
-
+<not yet finished>
 ```
 
 
@@ -66,10 +66,12 @@ Money result = SCalcBuilder.instanceFor(Money.class)
 
 
 ## Predefined content
-The SCalc library has some predefined functions and constants that can be used in every expression. Keep in mind that this functions and constants can have multiple aliases. For a full listing see scalc.internal.functions.Functions:
+The SCalc library has some predefined functions and constants that can be used in every expression. Keep in mind that this functions and constants can have multiple aliases. For a full listing see:  
+- scalc.internal.functions.Functions  
+- scalc.internal.constants.Constants
 
 ### Functions
-- root(value, [default=2] root)  
+- root(value, root=2)  
 description: Calculates the xth root. If no second param is given, it calculates the square root.   
 aliases: √, wurzel  
 example: √(16) = 4, Root(16, 4) = 2
@@ -84,7 +86,10 @@ value: 3.14159265358979323846
 aliases: π
 - ALL_PARAMS  
 value: All given parameters. Can be used for example for the sum calculation: ∑(ALL_PARAMS)
-example: 12, 7, 1
+example: 12, 7, 1  
+- E  
+value: 2.7182818284590452354  
+description: Euler number
 
 
 ## Expressions
