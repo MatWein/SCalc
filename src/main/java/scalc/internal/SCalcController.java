@@ -2,6 +2,7 @@ package scalc.internal;
 
 import scalc.SCalc;
 import scalc.SCalcOptions;
+import scalc.exceptions.CalculationException;
 import scalc.internal.converter.NumberTypeConverter;
 import scalc.internal.converter.ToNumberConverter;
 import scalc.internal.functions.FunctionImpl;
@@ -32,7 +33,7 @@ public class SCalcController {
             return parseDefinition(options);
         }
 
-        String resolvedExpression = resolveExpression(expression, options.getParams());
+        String resolvedExpression = resolveExpression(options.getCalculationMathContext(), expression, options.getParams());
         SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options.getCalculationMathContext());
         return executor.parse();
     }
@@ -54,7 +55,7 @@ public class SCalcController {
                 case "*": result = result.multiply(value); break;
                 case "/": result = result.divide(value, mathContext); break;
                 case "^": result = SCalcExecutor.calulatePow(result, value, mathContext); break;
-                default: throw new RuntimeException("Expression invalid.");
+                default: throw new CalculationException("Expression invalid.");
             }
         }
 
@@ -69,13 +70,13 @@ public class SCalcController {
         for (String definition : definitions) {
             if (definition.trim().startsWith("return")) {
                 String expression = definition.trim().substring("return".length());
-                String resolvedExpression = resolveExpression(expression, customParams);
+                String resolvedExpression = resolveExpression(options.getCalculationMathContext(), expression, customParams);
                 SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options.getCalculationMathContext(), customFunctions);
                 return executor.parse();
             } else {
                 String[] assignment = definition.split("=");
                 if (assignment.length != 2) {
-                    throw new RuntimeException("Definitions cannot have more than 2 parts.");
+                    throw new CalculationException("Definitions cannot have more than 2 parts.");
                 } else {
                     final String variableOrFunctionName = assignment[0].trim();
                     final String expression = assignment[1].trim();
@@ -84,7 +85,7 @@ public class SCalcController {
                     boolean isVariable = !isFunction;
 
                     if (isVariable) {
-                        String resolvedExpression = resolveExpression(expression, customParams);
+                        String resolvedExpression = resolveExpression(options.getCalculationMathContext(), expression, customParams);
                         SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options.getCalculationMathContext(), customFunctions);
                         BigDecimal result = executor.parse();
 
@@ -92,7 +93,7 @@ public class SCalcController {
                     } else {
                         Matcher matcher = Pattern.compile("(.*?)\\((.*?)\\)").matcher(variableOrFunctionName);
                         if (!matcher.find()) {
-                            throw new RuntimeException("Function definition invalid: " + variableOrFunctionName);
+                            throw new CalculationException("Function definition invalid: " + variableOrFunctionName);
                         }
 
                         final String name = matcher.group(1);
@@ -109,7 +110,7 @@ public class SCalcController {
                                     functionParamsAsMap.put(paramName, paramValue);
                                 }
 
-                                String resolvedExpression = resolveExpression(expression, functionParamsAsMap);
+                                String resolvedExpression = resolveExpression(mathContext, expression, functionParamsAsMap);
                                 SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options.getCalculationMathContext(), customFunctions);
                                 return executor.parse();
                             }
@@ -119,15 +120,26 @@ public class SCalcController {
             }
         }
 
-        throw new RuntimeException("No 'return ...' statement was found on the given expression.");
+        throw new CalculationException("No 'return ...' statement was found on the given expression.");
     }
 
-    private static String resolveExpression(String expression, Map<String, Number> params) {
-        for (Entry<String, Number> param : params.entrySet()) {
-            String number = param.getValue() == null ? "0" : paramToString(param.getValue());
-            expression = expression.replaceAll("\\b" + param.getKey() + "\\b", number);
-        }
+    private static String resolveExpression(MathContext mathContext, String expression, Map<String, Number> params) {
+        expression = replaceGivenParamsInExpression(expression, params);
+        expression = replaceAllParamsConstant(expression, params);
+        expression = replaceGlobalConstants(mathContext, expression);
 
+        return expression;
+    }
+
+    private static String replaceGlobalConstants(MathContext mathContext, String expression) {
+        String pi = new BigDecimal(Math.PI, mathContext).toString();
+        expression = replaceWord(expression, "PI", pi);
+        expression = replaceWord(expression, "π", pi);
+
+        return expression;
+    }
+
+    private static String replaceAllParamsConstant(String expression, Map<String, Number> params) {
         List<String> allParamsAsString = new ArrayList<>();
         for (Number value : params.values()) {
             allParamsAsString.add(paramToString(value));
@@ -136,12 +148,23 @@ public class SCalcController {
         String paramString = allParamsAsString.toString();
         paramString = paramString.substring(1, paramString.length() - 1);
 
-        expression = expression.replaceAll("\\bALL_PARAMS\\b", paramString);
+        expression = replaceWord(expression, "ALL_PARAMS", paramString);
+        return expression;
+    }
 
+    private static String replaceGivenParamsInExpression(String expression, Map<String, Number> params) {
+        for (Entry<String, Number> param : params.entrySet()) {
+            String number = param.getValue() == null ? "0" : paramToString(param.getValue());
+            expression = replaceWord(expression, param.getKey(), number);
+        }
         return expression;
     }
 
     private static String paramToString(Number param) {
         return NumberTypeConverter.convert(param, BigDecimal.class).toString();
+    }
+
+    private static String replaceWord(String value, String wordToReplace, String newValue) {
+        return value.replaceAll("\\b" + wordToReplace + "\\b", newValue);
     }
 }

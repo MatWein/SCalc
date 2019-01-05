@@ -1,5 +1,6 @@
 package scalc;
 
+import scalc.exceptions.CalculationException;
 import scalc.internal.ParamExtractor;
 import scalc.internal.converter.INumberConverter;
 
@@ -93,7 +94,7 @@ public class SCalcBuilder<RETURN_TYPE> {
         try {
             this.customConverters.put(type, converterType.getConstructor().newInstance());
         } catch (Throwable e) {
-            throw new RuntimeException(String.format("Number converter has no default constructur: %s", converterType.getName()));
+            throw new CalculationException(String.format("Number converter has no default constructur: %s", converterType.getName()));
         }
         return this;
     }

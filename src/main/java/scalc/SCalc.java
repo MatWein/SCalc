@@ -1,5 +1,6 @@
 package scalc;
 
+import scalc.exceptions.CalculationException;
 import scalc.internal.SCalcController;
 
 public class SCalc<RETURN_TYPE> {
@@ -10,7 +11,13 @@ public class SCalc<RETURN_TYPE> {
     }
 
     public RETURN_TYPE calc() {
-        return SCalcController.calc(this);
+        try {
+            return SCalcController.calc(this);
+        } catch (CalculationException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new CalculationException("Unexpected error on calculation.", e);
+        }
     }
 
     public SCalcOptions<RETURN_TYPE> getOptions() {

@@ -2,6 +2,7 @@ package scalc.internal.converter;
 
 import org.junit.Assert;
 import org.junit.Test;
+import scalc.exceptions.CalculationException;
 
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,7 +45,7 @@ public class NumberTypeConverterTest {
         Assert.assertEquals(120, result, 0);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CalculationException.class)
     public void convert_UnsupportedType() {
         NumberTypeConverter.convert(120.1, AtomicInteger.class);
     }

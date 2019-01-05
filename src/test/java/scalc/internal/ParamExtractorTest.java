@@ -3,6 +3,7 @@ package scalc.internal;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import scalc.exceptions.CalculationException;
 import scalc.internal.converter.INumberConverter;
 
 import java.util.HashMap;
@@ -22,7 +23,7 @@ public class ParamExtractorTest {
         Assert.assertTrue(result.isEmpty());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CalculationException.class)
     public void extractParamsFromNameValuePairs_InvalidPairs() {
         ParamExtractor.extractParamsFromNameValuePairs(converters, new Object[] { "a" });
     }
@@ -36,12 +37,12 @@ public class ParamExtractorTest {
         Assert.assertEquals(2, result.get("b"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CalculationException.class)
     public void extractParamsFromNameValuePairs_InvalidPairsByTypeString() {
         ParamExtractor.extractParamsFromNameValuePairs(converters, new Object[] { "a", "10.1", "b", 2 });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CalculationException.class)
     public void extractParamsFromNameValuePairs_InvalidPairsByTypeNumber() {
         ParamExtractor.extractParamsFromNameValuePairs(converters, new Object[] { 1, 1 });
     }

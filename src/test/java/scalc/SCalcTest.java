@@ -2,6 +2,7 @@ package scalc;
 
 import org.junit.Assert;
 import org.junit.Test;
+import scalc.exceptions.CalculationException;
 import scalc.test.model.Money;
 import scalc.test.model.MoneyConverter;
 
@@ -201,7 +202,7 @@ public class SCalcTest {
         Assert.assertEquals(10.0, result, 0);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = CalculationException.class)
     public void calc_ComplexMultiline_NoReturn() {
         SCalcBuilder.doubleInstance()
                 .expression(
@@ -254,5 +255,16 @@ public class SCalcTest {
                 .calc();
 
         Assert.assertEquals(0.0, result, 0);
+    }
+
+    @Test
+    public void calc_GlobalConstants() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("PI * 2 - π")
+                .resultScale(2)
+                .build()
+                .calc();
+
+        Assert.assertEquals(3.14, result, 0);
     }
 }

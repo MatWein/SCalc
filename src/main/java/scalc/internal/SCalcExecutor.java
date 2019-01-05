@@ -1,5 +1,6 @@
 package scalc.internal;
 
+import scalc.exceptions.CalculationException;
 import scalc.internal.functions.FunctionImpl;
 import scalc.internal.functions.Functions;
 
@@ -35,7 +36,7 @@ public class SCalcExecutor {
 
         nextChar();
         BigDecimal x = parseExpression();
-        if (pos < expression.length()) throw new RuntimeException("Unexpected: " + currentChar);
+        if (pos < expression.length()) throw new CalculationException("Unexpected: " + currentChar);
         return x;
     }
 
@@ -90,12 +91,12 @@ public class SCalcExecutor {
                 funcImpl = customFunctions.get(func);
             }
             if (funcImpl == null) {
-                throw new RuntimeException("Unknown function: " + func);
+                throw new CalculationException("Unknown function: " + func);
             }
 
             x = funcImpl.call(mathContext, factors);
         } else {
-            throw new RuntimeException("Unexpected: " + currentChar);
+            throw new CalculationException("Unexpected: " + currentChar);
         }
 
         if (eat('^')) x = calulatePow(x, parseFactor(), mathContext);

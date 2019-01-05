@@ -1,5 +1,7 @@
 package scalc.internal.converter;
 
+import scalc.exceptions.CalculationException;
+
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -16,7 +18,7 @@ public class ToNumberConverter {
 
         INumberConverter numberConverter = converters.get(object.getClass());
         if (numberConverter == null) {
-            throw new IllegalArgumentException(String.format("Cannot find converter for '%s'.", object));
+            throw new CalculationException(String.format("Cannot find converter for '%s'.", object));
         }
 
         return numberConverter.toBigDecimal(object);
@@ -37,7 +39,7 @@ public class ToNumberConverter {
 
         INumberConverter numberConverter = converters.get(returnType);
         if (numberConverter == null) {
-            throw new IllegalArgumentException(String.format("Cannot find converter for '%s'.", returnType.getName()));
+            throw new CalculationException(String.format("Cannot find converter for '%s'.", returnType.getName()));
         }
 
         return (RETURN_TYPE)numberConverter.fromBigDecimal(value);

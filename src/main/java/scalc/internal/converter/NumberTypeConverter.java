@@ -1,5 +1,7 @@
 package scalc.internal.converter;
 
+import scalc.exceptions.CalculationException;
+
 import java.math.BigDecimal;
 
 @SuppressWarnings("unchecked")
@@ -28,7 +30,7 @@ public class NumberTypeConverter {
             return (RETURN_TYPE)new BigDecimal(valueToConvert.toString());
         }
 
-        throw new IllegalArgumentException(String.format("Value of type '%s': %s cannot be converted to type '%s'.",
+        throw new CalculationException(String.format("Value of type '%s': %s cannot be converted to type '%s'.",
                 valueToConvert.getClass().getName(),
                 valueToConvert,
                 returnType.getName()));
