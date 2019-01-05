@@ -165,6 +165,6 @@ public class SCalcController {
     }
 
     private static String replaceWord(String value, String wordToReplace, String newValue) {
-        return value.replaceAll("\\b" + wordToReplace + "\\b", newValue);
+        return value.replaceAll("(?i)\\b" + wordToReplace + "\\b", newValue);
     }
 }

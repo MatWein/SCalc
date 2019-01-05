@@ -304,4 +304,16 @@ public class SCalcTest {
 
         Assert.assertEquals(3.14, result, 0);
     }
+
+    @Test
+    public void calc_CaseInsensitiveNames() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("pI * 2 - π + VAR1")
+                .resultScale(2)
+                .parameter("var1", 1)
+                .build()
+                .calc();
+
+        Assert.assertEquals(4.14, result, 0);
+    }
 }

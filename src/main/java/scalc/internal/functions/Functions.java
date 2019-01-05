@@ -10,11 +10,12 @@ public class Functions {
         Map<String, FunctionImpl> functions = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
         functions.put("√", RootFunction.INSTANCE);
+        functions.put("root", RootFunction.INSTANCE);
         functions.put("wurzel", RootFunction.INSTANCE);
-        functions.put("sqrt", RootFunction.INSTANCE);
 
         functions.put("∑", SumFunction.INSTANCE);
         functions.put("sum", SumFunction.INSTANCE);
+        functions.put("summe", SumFunction.INSTANCE);
 
         return functions;
     }
