@@ -13,6 +13,9 @@ public class Functions {
         functions.put("wurzel", RootFunction.INSTANCE);
         functions.put("sqrt", RootFunction.INSTANCE);
 
+        functions.put("∑", SumFunction.INSTANCE);
+        functions.put("sum", SumFunction.INSTANCE);
+
         return functions;
     }
 

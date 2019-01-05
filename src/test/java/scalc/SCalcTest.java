@@ -191,9 +191,33 @@ public class SCalcTest {
     public void calc_ComplexMultiline() {
         Double result = SCalcBuilder.doubleInstance()
                 .expression(
-                    "f(x, y)=10 + (x * y) - 1;" +
+                    "f(x, y)=10 + (x * y) - 1;\r\n" +
                     "g(x) = wurzel(x);" +
-                    "variable1 = 7;" +
+                    "variable1 = 7; " +
+                    "return f(2, 3) + g(4) - variable1;")
+                .build()
+                .calc();
+
+        Assert.assertEquals(10.0, result, 0);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void calc_ComplexMultiline_NoReturn() {
+        SCalcBuilder.doubleInstance()
+                .expression(
+                    "a=10;\r\n" +
+                    "b=12;")
+                .build()
+                .calc();
+    }
+
+    @Test
+    public void calc_ComplexMultiline2() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression(
+                    "f(x, y)=10 + (x * y) - 1;\r\n" +
+                    "g(x) = wurzel(x);" +
+                    "variable1 = 7; " +
                     "return f(2, 3) + g(4) - variable1;")
                 .build()
                 .calc();
@@ -209,5 +233,26 @@ public class SCalcTest {
                 .calc();
 
         Assert.assertEquals(2.0, result, 0);
+    }
+
+    @Test
+    public void calc_SumAllParams() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("Sum(ALL_PARAMS)")
+                .params(10, 5, 2, 7)
+                .build()
+                .calc();
+
+        Assert.assertEquals(24.0, result, 0);
+    }
+
+    @Test
+    public void calc_SumAllParams_NoParams() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("Sum(ALL_PARAMS)")
+                .build()
+                .calc();
+
+        Assert.assertEquals(0.0, result, 0);
     }
 }

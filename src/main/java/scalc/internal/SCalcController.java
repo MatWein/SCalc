@@ -67,8 +67,8 @@ public class SCalcController {
 
         String[] definitions = options.getExpression().split(";");
         for (String definition : definitions) {
-            if (definition.startsWith("return")) {
-                String expression = definition.substring("return".length());
+            if (definition.trim().startsWith("return")) {
+                String expression = definition.trim().substring("return".length());
                 String resolvedExpression = resolveExpression(expression, customParams);
                 SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options.getCalculationMathContext(), customFunctions);
                 return executor.parse();
@@ -124,10 +124,24 @@ public class SCalcController {
 
     private static String resolveExpression(String expression, Map<String, Number> params) {
         for (Entry<String, Number> param : params.entrySet()) {
-            String number = param.getValue() == null ? "0" : NumberTypeConverter.convert(param.getValue(), BigDecimal.class).toString();
+            String number = param.getValue() == null ? "0" : paramToString(param.getValue());
             expression = expression.replaceAll("\\b" + param.getKey() + "\\b", number);
         }
 
+        List<String> allParamsAsString = new ArrayList<>();
+        for (Number value : params.values()) {
+            allParamsAsString.add(paramToString(value));
+        }
+
+        String paramString = allParamsAsString.toString();
+        paramString = paramString.substring(1, paramString.length() - 1);
+
+        expression = expression.replaceAll("\\bALL_PARAMS\\b", paramString);
+
         return expression;
+    }
+
+    private static String paramToString(Number param) {
+        return NumberTypeConverter.convert(param, BigDecimal.class).toString();
     }
 }

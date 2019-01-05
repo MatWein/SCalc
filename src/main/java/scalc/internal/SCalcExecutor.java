@@ -24,7 +24,7 @@ public class SCalcExecutor {
 
     public SCalcExecutor(String expression, MathContext mathContext, Map<String, FunctionImpl> customFunctions) {
         this.mathContext = mathContext;
-        this.expression = expression;
+        this.expression = expression.trim();
         this.customFunctions = customFunctions;
     }
 
@@ -73,8 +73,17 @@ public class SCalcExecutor {
         } else if (Functions.calculateIsValidFunctionChar(currentChar)) {
             while (Functions.calculateIsValidFunctionChar(currentChar)) nextChar();
             String func = expression.substring(startPos, this.pos);
-            List<BigDecimal> factors = parseFactors();
-            eat(')');
+
+            boolean isEmptyFunctionBody = expression.charAt(this.pos) == '(' && expression.charAt(this.pos + 1) == ')';
+            List<BigDecimal> factors;
+            if (isEmptyFunctionBody) {
+                factors = new ArrayList<>();
+                eat('(');
+                eat(')');
+            } else {
+                factors = parseFactors();
+                eat(')');
+            }
 
             FunctionImpl funcImpl = Functions.FUNCTIONS.get(func);
             if (funcImpl == null) {
