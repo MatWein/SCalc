@@ -4,15 +4,14 @@ import scalc.internal.converter.INumberConverter;
 
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SCalcOptions<RETURN_TYPE> {
     private Class<RETURN_TYPE> returnType;
-    private String rawExpression;
-    private Map<String, Object> params = new LinkedHashMap<>();
-    private Object[] paramsAsArray;
+    private String expression;
+
+    private Map<String, Number> params;
+    private Map<Class<?>, INumberConverter> converters;
 
     private int resultScale = 10;
     private RoundingMode resultRoundingMode = RoundingMode.HALF_UP;
@@ -20,7 +19,6 @@ public class SCalcOptions<RETURN_TYPE> {
     private int calculationScale = 10;
     private RoundingMode calculationRoundingMode = RoundingMode.HALF_UP;
     private MathContext calculationMathContext = new MathContext(calculationScale, calculationRoundingMode);
-    private Map<Class<?>, INumberConverter> customConverters = new HashMap<Class<?>, INumberConverter>();
     private boolean removeNullParameters = true;
 
     public Class<RETURN_TYPE> getReturnType() {
@@ -29,14 +27,6 @@ public class SCalcOptions<RETURN_TYPE> {
 
     void setReturnType(Class<RETURN_TYPE> returnType) {
         this.returnType = returnType;
-    }
-
-    public String getRawExpression() {
-        return rawExpression;
-    }
-
-    void setRawExpression(String rawExpression) {
-        this.rawExpression = rawExpression;
     }
 
     public int getResultScale() {
@@ -87,14 +77,6 @@ public class SCalcOptions<RETURN_TYPE> {
         this.calculationMathContext = calculationMathContext;
     }
 
-    public Map<Class<?>, INumberConverter> getCustomConverters() {
-        return customConverters;
-    }
-
-    void setCustomConverters(Map<Class<?>, INumberConverter> customConverters) {
-        this.customConverters = customConverters;
-    }
-
     public boolean isRemoveNullParameters() {
         return removeNullParameters;
     }
@@ -103,19 +85,27 @@ public class SCalcOptions<RETURN_TYPE> {
         this.removeNullParameters = removeNullParameters;
     }
 
-    public Map<String, Object> getParams() {
+    public String getExpression() {
+        return expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
+
+    public Map<String, Number> getParams() {
         return params;
     }
 
-    void setParams(Map<String, Object> params) {
+    public void setParams(Map<String, Number> params) {
         this.params = params;
     }
 
-    public Object[] getParamsAsArray() {
-        return paramsAsArray;
+    public Map<Class<?>, INumberConverter> getConverters() {
+        return converters;
     }
 
-    void setParamsAsArray(Object[] paramsAsArray) {
-        this.paramsAsArray = paramsAsArray;
+    public void setConverters(Map<Class<?>, INumberConverter> converters) {
+        this.converters = converters;
     }
 }

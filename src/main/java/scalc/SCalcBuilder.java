@@ -1,22 +1,22 @@
 package scalc;
 
-import scalc.internal.ExpressionParser;
 import scalc.internal.ParamExtractor;
 import scalc.internal.converter.INumberConverter;
-import scalc.internal.expr.Expression;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SCalcBuilder<RETURN_TYPE> {
     private static Map<Class<?>, INumberConverter> staticConverters = new HashMap<>();
-    private SCalcOptions<RETURN_TYPE> options = new SCalcOptions<>();
 
-    private SCalcBuilder() {
-    }
+    private SCalcOptions<RETURN_TYPE> options = new SCalcOptions<>();
+    private Map<String, Object> params = new LinkedHashMap<>();
+    private Object[] paramsAsArray;
+    private Map<Class<?>, INumberConverter> customConverters = new HashMap<>();
 
     public static SCalcBuilder<Double> doubleInstance() {
         return instanceFor(Double.class);
@@ -43,22 +43,22 @@ public class SCalcBuilder<RETURN_TYPE> {
     }
 
     public SCalcBuilder<RETURN_TYPE> expression(String rawExpression) {
-        this.options.setRawExpression(rawExpression);
+        this.options.setExpression(rawExpression);
         return this;
     }
 
     public SCalcBuilder<RETURN_TYPE> params(Map<String, Object> params) {
-        this.options.getParams().putAll(params);
+        this.params.putAll(params);
         return this;
     }
 
     public SCalcBuilder<RETURN_TYPE> params(Object... params) {
-        this.options.setParamsAsArray(params);
+        this.paramsAsArray = params;
         return this;
     }
 
     public SCalcBuilder<RETURN_TYPE> parameter(String name, Object value) {
-        this.options.getParams().put(name, value);
+        this.params.put(name, value);
         return this;
     }
 
@@ -91,7 +91,7 @@ public class SCalcBuilder<RETURN_TYPE> {
 
     public SCalcBuilder<RETURN_TYPE> registerConverter(Class<?> type, Class<? extends INumberConverter> converterType) {
         try {
-            this.options.getCustomConverters().put(type, converterType.getConstructor().newInstance());
+            this.customConverters.put(type, converterType.getConstructor().newInstance());
         } catch (Throwable e) {
             throw new RuntimeException(String.format("Number converter has no default constructur: %s", converterType.getName()));
         }
@@ -99,29 +99,28 @@ public class SCalcBuilder<RETURN_TYPE> {
     }
 
     public SCalcBuilder<RETURN_TYPE> registerConverters(Map<Class<?>, INumberConverter> converters) {
-        this.options.getCustomConverters().putAll(converters);
+        this.customConverters.putAll(converters);
         return this;
     }
 
     public SCalcBuilder<RETURN_TYPE> registerConverter(Class<?> type, INumberConverter converter) {
-        this.options.getCustomConverters().put(type, converter);
+        this.customConverters.put(type, converter);
         return this;
     }
 
     public SCalc<RETURN_TYPE> build() {
-        Expression expression = ExpressionParser.parse(options.getRawExpression());
-
         Map<Class<?>, INumberConverter> converters = new HashMap<>();
         converters.putAll(staticConverters);
-        converters.putAll(options.getCustomConverters());
+        converters.putAll(customConverters);
+        options.setConverters(converters);
 
         Map<String, Number> params = ParamExtractor.calculateParams(
-                expression,
                 converters,
-                options.getParams(),
-                options.getParamsAsArray(),
+                this.params,
+                this.paramsAsArray,
                 options.isRemoveNullParameters());
+        options.setParams(params);
 
-        return new SCalc<>(expression, params, converters, options);
+        return new SCalc<>(options);
     }
 }

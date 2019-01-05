@@ -2,15 +2,14 @@ package scalc.internal;
 
 import scalc.internal.converter.INumberConverter;
 import scalc.internal.converter.ToNumberConverter;
-import scalc.internal.expr.Expression;
-import scalc.internal.expr.ISubExpressions;
-import scalc.internal.expr.Variable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class ParamExtractor {
     public static Map<String, Number> calculateParams(
-            Expression expression,
             Map<Class<?>, INumberConverter> converters,
             Map<String, Object> paramsAsMap,
             Object[] paramsAsArray,
@@ -28,45 +27,27 @@ public class ParamExtractor {
             if (paramsAsArray[0] instanceof CharSequence) {
                 result.putAll(extractParamsFromNameValuePairs(converters, paramsAsArray));
             } else {
-                result.putAll(extractParamsInOrder(converters, expression, paramsAsArray));
+                result.putAll(extractParamsWithRandomName(converters, paramsAsArray));
             }
         }
 
         if (removeNullParameters) {
+            //noinspection StatementWithEmptyBody
             while (result.values().remove(null)) {}
         }
 
         return result;
     }
 
-    public static Map<String, Number> extractParamsInOrder(Map<Class<?>, INumberConverter> converters, Expression expression, Object[] params) {
-        Map<String, Number> result = new LinkedHashMap<>();
+    private static Map<String, Number> extractParamsWithRandomName(Map<Class<?>, INumberConverter> converters, Object[] paramsAsArray) {
+        Map<String, Number> result = new HashMap<>();
 
-        Queue<Object> paramsAsQueue = new LinkedList<>(Arrays.asList(params));
-        iterateExpression(converters, result, expression, paramsAsQueue);
-
-        for (Object remainingParam : paramsAsQueue) {
-            result.put(UUID.randomUUID().toString().replace("-", ""), ToNumberConverter.toNumber(remainingParam, converters));
+        for (Object param : paramsAsArray) {
+            Number value = ToNumberConverter.toNumber(param, converters);
+            result.put(UUID.randomUUID().toString(), value);
         }
 
         return result;
-    }
-
-    private static void iterateExpression(
-            Map<Class<?>, INumberConverter> converters,
-            Map<String, Number> result,
-            Expression expression,
-            Queue<Object> paramsAsQueue) {
-
-        if (expression instanceof Variable) {
-            Object polledNumber = paramsAsQueue.poll();
-            result.put(((Variable) expression).getName(), ToNumberConverter.toNumber(polledNumber, converters));
-        } else if (expression instanceof ISubExpressions) {
-            List<? extends Expression> expressions = ((ISubExpressions) expression).getExpressions();
-            for (Expression subExpression : expressions) {
-                iterateExpression(converters, result, subExpression, paramsAsQueue);
-            }
-        }
     }
 
     public static Map<String, Number> extractParamsFromNameValuePairs(Map<Class<?>, INumberConverter> converters, Object[] params) {

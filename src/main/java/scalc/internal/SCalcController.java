@@ -1,125 +1,35 @@
 package scalc.internal;
 
 import scalc.SCalc;
-import scalc.internal.converter.NumberTypeConverter;
+import scalc.SCalcOptions;
 import scalc.internal.converter.ToNumberConverter;
-import scalc.internal.expr.*;
-import scalc.internal.functions.FunctionImpl;
-import scalc.internal.functions.RootFunction;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Map.Entry;
 
 public class SCalcController {
-    private static final Map<String, FunctionImpl> FUNCTIONS = getPredefinedFunctions();
-
-    private static Map<String, FunctionImpl> getPredefinedFunctions() {
-        Map<String, FunctionImpl> functions = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-
-        functions.put("√", RootFunction.INSTANCE);
-        functions.put("wurzel", RootFunction.INSTANCE);
-        functions.put("sqrt", RootFunction.INSTANCE);
-        
-        return functions;
-    }
-
     public static <RETURN_TYPE> RETURN_TYPE calc(SCalc<RETURN_TYPE> sCalc) {
-        Expression expression = sCalc.getExpression();
+        SCalcOptions<RETURN_TYPE> options = sCalc.getOptions();
+        BigDecimal resolvedValue = calculateResult(options);
+        resolvedValue = resolvedValue.setScale(options.getResultScale(), options.getResultRoundingMode());
 
-        BigDecimal resolvedValue = resolveExpression(expression, sCalc);
-        resolvedValue = resolvedValue.setScale(sCalc.getOptions().getResultScale(), sCalc.getOptions().getResultRoundingMode());
-
-        return ToNumberConverter.toResultType(resolvedValue, sCalc.getOptions().getReturnType(), sCalc.getConverters());
+        return ToNumberConverter.toResultType(resolvedValue, options.getReturnType(), options.getConverters());
     }
 
-    private static BigDecimal resolveExpression(Expression expression, SCalc<?> sCalc) {
-        BigDecimal rawValue = resolveRawExpression(expression, sCalc);
+    private static <RETURN_TYPE> BigDecimal calculateResult(SCalcOptions<RETURN_TYPE> options) {
+        String expression = resolveExpression(options);
 
-        if (expression instanceof INegatable) {
-            if (!((INegatable) expression).isPositive()) {
-                return rawValue.multiply(new BigDecimal(-1));
-            }
-        }
-
-        return rawValue;
+        SCalcExecutor<RETURN_TYPE> executor = new SCalcExecutor<>(options, expression);
+        return executor.parse();
     }
 
-    private static BigDecimal resolveRawExpression(Expression expression, SCalc<?> sCalc) {
-        Map<String, Number> params = sCalc.getParams();
-
-        if (expression instanceof Constant) {
-            return NumberTypeConverter.convert(((Constant) expression).getValue(), BigDecimal.class);
-        } else if (expression instanceof Variable) {
-            return NumberTypeConverter.convert(params.get(((Variable) expression).getName()), BigDecimal.class);
-        } else if (expression instanceof Function) {
-            Function expressionAsFunction = (Function) expression;
-            String functionName = expressionAsFunction.getName();
-
-            List<BigDecimal> functionParams = new ArrayList<>();
-            List<Expression> expressions = expressionAsFunction.getExpressions();
-            for (Expression subExpression : expressions) {
-                BigDecimal value = resolveExpression(subExpression, sCalc);
-                functionParams.add(value);
-            }
-
-            return callFunction(functionName, functionParams);
-        } else if (expression instanceof ComplexExpression) {
-            List<Expression> subExpressions = new ArrayList<>(((ComplexExpression) expression).getExpressions());
-
-            processOperator(sCalc, subExpressions, Operator.POW);
-            processOperator(sCalc, subExpressions, Operator.MULTIPLICATION);
-            processOperator(sCalc, subExpressions, Operator.DIVISION);
-            processOperator(sCalc, subExpressions, Operator.SUBTRACTION);
-            processOperator(sCalc, subExpressions, Operator.ADDITION);
-
-            return (BigDecimal)(((Constant)subExpressions.get(0)).getValue());
-        } else if (expression instanceof Operator) {
-            if (params.size() == 0) {
-                return new BigDecimal(0.0);
-            }
-
-            Operator operator = (Operator)expression;
-            LinkedList<Number> paramsAsQueue = new LinkedList<>(params.values());
-
-            BigDecimal result = NumberTypeConverter.convert(paramsAsQueue.poll(), BigDecimal.class);
-
-            while (!paramsAsQueue.isEmpty()) {
-                BigDecimal nextElement = NumberTypeConverter.convert(paramsAsQueue.poll(), BigDecimal.class);
-                result = operator.getFunction().calc(sCalc, result, nextElement);
-            }
-
-            return result;
+    private static <RETURN_TYPE> String resolveExpression(SCalcOptions<RETURN_TYPE> options) {
+        String expression = options.getExpression();
+        for (Entry<String, Number> param : options.getParams().entrySet()) {
+            String number = param.getValue() == null ? "0" : param.getValue().toString();
+            expression = expression.replaceAll("\\b" + param.getKey() + "\\b", number);
         }
 
-        throw new IllegalArgumentException(String.format("Cannot calculate value for expression: %s", expression));
-    }
-
-    private static void processOperator(SCalc<?> sCalc, List<Expression> subExpressions, Operator operator) {
-        int operatorIndex;
-        while ((operatorIndex = subExpressions.indexOf(operator)) != -1) {
-            int firstOperandIndex = operatorIndex - 1;
-            int secondOperandIndex = operatorIndex + 1;
-
-            Expression expressionBefore = subExpressions.get(firstOperandIndex);
-            Expression expressionAfter = subExpressions.get(secondOperandIndex);
-
-            BigDecimal valueBefore = resolveExpression(expressionBefore, sCalc);
-            BigDecimal valueAfter = resolveExpression(expressionAfter, sCalc);
-
-            BigDecimal result = operator.getFunction().calc(sCalc, valueBefore, valueAfter);
-            subExpressions.remove(firstOperandIndex);
-            subExpressions.remove(firstOperandIndex);
-            subExpressions.remove(firstOperandIndex);
-            subExpressions.add(firstOperandIndex, new Constant(true, result));
-        }
-    }
-
-    private static BigDecimal callFunction(String name, List<BigDecimal> functionParams) {
-        FunctionImpl function = FUNCTIONS.get(name);
-        if (function == null) {
-            throw new IllegalArgumentException(String.format("Function with name '%s' not defined.", name));
-        }
-
-        return function.call(functionParams);
+        return expression;
     }
 }

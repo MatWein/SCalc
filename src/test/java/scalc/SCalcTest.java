@@ -99,6 +99,7 @@ public class SCalcTest {
         Double result = SCalcBuilder.doubleInstance()
                 .expression("*")
                 .params(2, 3, null, 4)
+                .removeNullParameters(true)
                 .build()
                 .calc();
 
@@ -118,6 +119,17 @@ public class SCalcTest {
     }
 
     @Test
+    public void calc_AddAll() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("+")
+                .params(2, 3, 2)
+                .build()
+                .calc();
+
+        Assert.assertEquals(7.0, result, 0);
+    }
+
+    @Test
     public void calc_PowAll() {
         Double result = SCalcBuilder.doubleInstance()
                 .expression("^")
@@ -126,30 +138,6 @@ public class SCalcTest {
                 .calc();
 
         Assert.assertEquals(64.0, result, 0);
-    }
-
-    @Test
-    public void calc_Performance() {
-        long timeStart = System.currentTimeMillis();
-        SCalc<Double> sCalc = SCalcBuilder.doubleInstance()
-                .expression("a^b")
-                .build();
-        long timeEnd = System.currentTimeMillis();
-
-        System.out.println(String.format("Time needed for expression parsing: %sms.", timeEnd - timeStart));
-
-        Double result = 0.0;
-        timeStart = System.currentTimeMillis();
-        for (int i = 0; i < 100000; i++) {
-            result = sCalc
-                    .parameter("a", 10)
-                    .parameter("b", 2)
-                    .calc();
-        }
-        timeEnd = System.currentTimeMillis();
-
-        Assert.assertEquals(100.0, result, 0);
-        System.out.println(String.format("Time needed for calculation: %sms.", timeEnd - timeStart));
     }
 
     @Test
@@ -169,7 +157,7 @@ public class SCalcTest {
         params.put("var1", 4);
 
         Money result = SCalcBuilder.instanceFor(Money.class)
-                .expression("(√(16, 3) + 2) / (99.99 - 79.99 - 16)")
+                .expression("(√(16, 4) + 2) / (99.99 - 79.99 - 16)")
                 .params(params)
                 .registerConverter(Money.class, MoneyConverter.class)
                 .build()
@@ -199,5 +187,15 @@ public class SCalcTest {
                 .calc();
 
         Assert.assertEquals(17.0, result, 0);
+    }
+
+    @Test
+    public void calc_MultiParam() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("Wurzel(4, 2)")
+                .build()
+                .calc();
+
+        Assert.assertEquals(2.0, result, 0);
     }
 }
