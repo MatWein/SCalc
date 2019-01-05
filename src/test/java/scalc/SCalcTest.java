@@ -177,16 +177,28 @@ public class SCalcTest {
     }
 
     @Test
+    public void calc_ParamName() {
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("u*Wurzel(u)")
+                .parameter("u", 81)
+                .build()
+                .calc();
+
+        Assert.assertEquals(9.0 * 81.0, result, 0);
+    }
+
+    @Test
     public void calc_ComplexMultiline() {
         Double result = SCalcBuilder.doubleInstance()
                 .expression(
                     "f(x, y)=10 + (x * y) - 1;" +
                     "g(x) = wurzel(x);" +
-                    "return f(2, 3) + g(4);")
+                    "variable1 = 7;" +
+                    "return f(2, 3) + g(4) - variable1;")
                 .build()
                 .calc();
 
-        Assert.assertEquals(17.0, result, 0);
+        Assert.assertEquals(10.0, result, 0);
     }
 
     @Test
