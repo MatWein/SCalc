@@ -10,11 +10,11 @@ import scalc.internal.functions.RootFunction;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class SimpleCalculator {
+public class SCalcController {
     private static final Map<String, FunctionImpl> FUNCTIONS = getPredefinedFunctions();
 
     private static Map<String, FunctionImpl> getPredefinedFunctions() {
-        Map<String, FunctionImpl> functions = new TreeMap<String, FunctionImpl>(String.CASE_INSENSITIVE_ORDER);
+        Map<String, FunctionImpl> functions = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
         functions.put("√", RootFunction.INSTANCE);
         functions.put("wurzel", RootFunction.INSTANCE);
@@ -27,9 +27,9 @@ public class SimpleCalculator {
         Expression expression = sCalc.getExpression();
 
         BigDecimal resolvedValue = resolveExpression(expression, sCalc);
-        resolvedValue = resolvedValue.setScale(sCalc.getResultScale(), sCalc.getResultRoundingMode());
+        resolvedValue = resolvedValue.setScale(sCalc.getOptions().getResultScale(), sCalc.getOptions().getResultRoundingMode());
 
-        return ToNumberConverter.toResultType(resolvedValue, sCalc);
+        return ToNumberConverter.toResultType(resolvedValue, sCalc.getOptions().getReturnType(), sCalc.getConverters());
     }
 
     private static BigDecimal resolveExpression(Expression expression, SCalc<?> sCalc) {
@@ -55,7 +55,7 @@ public class SimpleCalculator {
             Function expressionAsFunction = (Function) expression;
             String functionName = expressionAsFunction.getName();
 
-            List<BigDecimal> functionParams = new ArrayList<BigDecimal>();
+            List<BigDecimal> functionParams = new ArrayList<>();
             List<Expression> expressions = expressionAsFunction.getExpressions();
             for (Expression subExpression : expressions) {
                 BigDecimal value = resolveExpression(subExpression, sCalc);
@@ -64,7 +64,7 @@ public class SimpleCalculator {
 
             return callFunction(functionName, functionParams);
         } else if (expression instanceof ComplexExpression) {
-            List<Expression> subExpressions = new ArrayList<Expression>(((ComplexExpression) expression).getExpressions());
+            List<Expression> subExpressions = new ArrayList<>(((ComplexExpression) expression).getExpressions());
 
             processOperator(sCalc, subExpressions, Operator.POW);
             processOperator(sCalc, subExpressions, Operator.MULTIPLICATION);
@@ -79,7 +79,7 @@ public class SimpleCalculator {
             }
 
             Operator operator = (Operator)expression;
-            LinkedList<Number> paramsAsQueue = new LinkedList<Number>(params.values());
+            LinkedList<Number> paramsAsQueue = new LinkedList<>(params.values());
 
             BigDecimal result = NumberTypeConverter.convert(paramsAsQueue.poll(), BigDecimal.class);
 

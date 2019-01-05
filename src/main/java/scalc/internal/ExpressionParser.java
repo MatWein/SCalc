@@ -1,6 +1,7 @@
 package scalc.internal;
 
 import scalc.internal.expr.*;
+import scalc.internal.expr.multiline.MultilineExpression;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,6 +22,11 @@ public class ExpressionParser {
     private static final String FUNCTION_PATTERN = "(" + SIGN_PATTERN + ")(" + NAME_PATTERN + ")" + "\\((.*)\\)";
     private static final Pattern COMPILED_FUNCTION_PATTERN = Pattern.compile(FUNCTION_PATTERN);
 
+    /*
+        f(x, y)=10 + (x * y) - 1;
+        g(x) = wurzel(x);
+        return f(2, 3) + g(4);
+     */
     public static Expression parse(String expression) {
         if (expression == null) {
             throw new IllegalArgumentException("Expression cannot be null.");
@@ -31,20 +37,26 @@ public class ExpressionParser {
             throw new IllegalArgumentException("Expression cannot be blank.");
         }
 
+        if (expression.contains(";")) {
+            return parseMultilineExpression(expression);
+        } else {
+            return parseExpression(expression);
+        }
+    }
+
+    private static MultilineExpression parseMultilineExpression(String expression) {
+        return null;
+    }
+
+    private static Expression parseExpression(String expression) {
         if (expression.matches(OPERATOR_PATTERN)) {
-            if (Operator.MULTIPLICATION.getOperator().equals(expression)) {
-                return Operator.MULTIPLICATION;
-            } else if (Operator.DIVISION.getOperator().equals(expression)) {
-                return Operator.DIVISION;
-            } else if (Operator.ADDITION.getOperator().equals(expression)) {
-                return Operator.ADDITION;
-            } else if (Operator.SUBTRACTION.getOperator().equals(expression)) {
-                return Operator.SUBTRACTION;
-            } else if (Operator.POW.getOperator().equals(expression)) {
-                return Operator.POW;
-            } else {
-                throw new IllegalArgumentException(String.format("Cannot find operator for expression '%s'.", expression));
+            for (Operator operator : Operator.ALL_OPERATORS) {
+                if (operator.getOperator().equals(expression)) {
+                    return operator;
+                }
             }
+
+            throw new IllegalArgumentException(String.format("Cannot find operator for expression '%s'.", expression));
         }
 
         if (expression.matches(CONSTANT_PATTERN)) {
@@ -71,7 +83,7 @@ public class ExpressionParser {
             String name = functionMatcher.group(2);
             String innerExpression = functionMatcher.group(3);
 
-            List<Expression> subExpressions = new ArrayList<Expression>();
+            List<Expression> subExpressions = new ArrayList<>();
             if (!"".equals(innerExpression)) {
                 String[] innerExpressions = innerExpression.split(",");
 
@@ -83,15 +95,7 @@ public class ExpressionParser {
             return new Function(!negative, expression, name, subExpressions);
         }
 
-        return parseComplexExpression(expression);
-    }
-
-    /*
-        f(x)=10 + (x * 2) - 1;
-        return f(2);
-     */
-    private static ComplexExpression parseComplexExpression(String expression) {
-
+        return parseComplexExpressionWithoutBracket(expression);
     }
 
     private static ComplexExpression parseComplexExpressionWithoutBracket(String expression) {
