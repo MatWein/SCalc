@@ -7,6 +7,7 @@ import scalc.internal.converter.INumberConverter;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -110,6 +111,19 @@ public class SCalcBuilder<RETURN_TYPE> {
      */
     public SCalcBuilder<RETURN_TYPE> params(Object... params) {
         this.paramsAsArray = params;
+        return this;
+    }
+
+    /**
+     * [OPTIONAL] Parameters in form of: <br/>
+     * - "name1", 10, "name2", 5, ...<br/>
+     * or<br/>
+     * - 10, 20, 30, ...<br/>
+     * Optional if the expression does not have any params.
+     * @param params Params for calculation
+     */
+    public SCalcBuilder<RETURN_TYPE> paramsAsCollection(Collection<?> params) {
+        this.paramsAsArray = params.toArray(new Object[] {});
         return this;
     }
 

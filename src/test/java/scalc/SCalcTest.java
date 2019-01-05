@@ -3,13 +3,17 @@ package scalc;
 import org.junit.Assert;
 import org.junit.Test;
 import scalc.exceptions.CalculationException;
+import scalc.internal.converter.INumberConverter;
 import scalc.test.model.Money;
 import scalc.test.model.MoneyConverter;
+import scalc.test.model.TestDto;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class SCalcTest {
     @Test
@@ -348,5 +352,47 @@ public class SCalcTest {
                 .calc();
 
         Assert.assertEquals(5.0, result, 0);
+    }
+
+    @Test
+    public void calc_SumDtos() {
+        Set<TestDto> dtos = new HashSet<>();
+        dtos.add(new TestDto(10.0));
+        dtos.add(new TestDto(5.1));
+        dtos.add(null);
+        dtos.add(new TestDto(2));
+
+        INumberConverter<TestDto> numberConverter = new INumberConverter<TestDto>() {
+            @Override
+            public BigDecimal toBigDecimal(TestDto input) {
+                if (input == null) {
+                    return null;
+                }
+                return new BigDecimal(input.getValueToExtract()).setScale(2, RoundingMode.HALF_UP);
+            }
+
+            @Override
+            public TestDto fromBigDecimal(BigDecimal input) {
+                throw new RuntimeException("Not implemented");
+            }
+        };
+
+        Double result = SCalcBuilder.doubleInstance()
+                .expression("+")
+                .paramsAsCollection(dtos)
+                .registerConverter(TestDto.class, numberConverter)
+                .build()
+                .calc();
+
+        Assert.assertEquals(17.1, result, 0);
+
+        result = SCalcBuilder.doubleInstance()
+                .expression("∑(ALL_PARAMS)")
+                .paramsAsCollection(dtos)
+                .registerConverter(TestDto.class, numberConverter)
+                .build()
+                .calc();
+
+        Assert.assertEquals(17.1, result, 0);
     }
 }

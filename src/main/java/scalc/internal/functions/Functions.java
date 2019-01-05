@@ -1,10 +1,13 @@
 package scalc.internal.functions;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class Functions {
     public static final Map<String, FunctionImpl> FUNCTIONS = getPredefinedFunctions();
+    public static final List<Character> FUNCTION_NAME_VALID_CHARS = Arrays.asList('√', '∑', 'ä', 'Ä', 'ö', 'Ö', 'ü', 'Ü', 'ß', '_');
 
     private static Map<String, FunctionImpl> getPredefinedFunctions() {
         Map<String, FunctionImpl> functions = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -20,7 +23,9 @@ public class Functions {
         return functions;
     }
 
-    public static boolean calculateIsValidFunctionChar(char currentChar) {
-        return (currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= 'a' && currentChar <= 'z') || currentChar == '√';
+    public static boolean calculateIsValidFunctionChar(char c) {
+        return (c >= 'A' && c <= 'Z')
+                || (c >= 'a' && c <= 'z')
+                || FUNCTION_NAME_VALID_CHARS.contains(c);
     }
 }
