@@ -1,15 +1,12 @@
 package scalc;
 
 import scalc.exceptions.CalculationException;
-import scalc.internal.ParamExtractor;
 import scalc.internal.converter.INumberConverter;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -19,8 +16,6 @@ public class SCalcBuilder<RETURN_TYPE> {
     private static Map<Class<?>, INumberConverter> staticConverters = new HashMap<>();
 
     private SCalcOptions<RETURN_TYPE> options = new SCalcOptions<>();
-    private Map<String, Object> params = new LinkedHashMap<>();
-    private Object[] paramsAsArray;
     private Map<Class<?>, INumberConverter> customConverters = new HashMap<>();
 
     /**
@@ -89,52 +84,6 @@ public class SCalcBuilder<RETURN_TYPE> {
      */
     public SCalcBuilder<RETURN_TYPE> expression(String rawExpression) {
         this.options.setExpression(rawExpression);
-        return this;
-    }
-
-    /**
-     * [OPTIONAL] Map of named parameters to use for calculation. Optional if the expression does not have any params.
-     * @param params Params for calculation
-     */
-    public SCalcBuilder<RETURN_TYPE> params(Map<String, Object> params) {
-        this.params.putAll(params);
-        return this;
-    }
-
-    /**
-     * [OPTIONAL] Parameters in form of: <br/>
-     * - "name1", 10, "name2", 5, ...<br/>
-     * or<br/>
-     * - 10, 20, 30, ...<br/>
-     * Optional if the expression does not have any params.
-     * @param params Params for calculation
-     */
-    public SCalcBuilder<RETURN_TYPE> params(Object... params) {
-        this.paramsAsArray = params;
-        return this;
-    }
-
-    /**
-     * [OPTIONAL] Parameters in form of: <br/>
-     * - "name1", 10, "name2", 5, ...<br/>
-     * or<br/>
-     * - 10, 20, 30, ...<br/>
-     * Optional if the expression does not have any params.
-     * @param params Params for calculation
-     */
-    public SCalcBuilder<RETURN_TYPE> paramsAsCollection(Collection<?> params) {
-        this.paramsAsArray = params.toArray(new Object[] {});
-        return this;
-    }
-
-    /**
-     * [OPTIONAL] Single parameter for calculation. Can be used multiple times to add more than one param.
-     * Optional if the expression does not have any params.
-     * @param name Name of the param
-     * @param value Value of the param as java.lang.Number or custom type.
-     */
-    public SCalcBuilder<RETURN_TYPE> parameter(String name, Object value) {
-        this.params.put(name, value);
         return this;
     }
 
@@ -239,13 +188,15 @@ public class SCalcBuilder<RETURN_TYPE> {
         converters.putAll(customConverters);
         options.setConverters(converters);
 
-        Map<String, Number> params = ParamExtractor.calculateParams(
-                converters,
-                this.params,
-                this.paramsAsArray,
-                options.isRemoveNullParameters());
-        options.setParams(params);
-
         return new SCalc<>(options);
+    }
+
+    /**
+     * Convenience method to run build and calc in one step if only one calculation is required.<br/>
+     * By using this method it is no more possible to specify custom parameters!
+     * @return The result of the calculation
+     */
+    public RETURN_TYPE buildAndCalc() {
+        return build().calc();
     }
 }

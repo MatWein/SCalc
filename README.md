@@ -17,10 +17,10 @@ Every calculation start with the SCalcBuilder:
 ```
 Double result = SCalcBuilder.doubleInstance()
     .expression("a + b - c")
+    .build()
     .parameter("a", 10)
     .parameter("b", 5)
     .parameter("c", 15)
-    .build()
     .calc();
 ```
 
@@ -28,8 +28,8 @@ The types of parameters and the result can be freely selected. You can enter eve
 ```
 BigDecimal result = SCalcBuilder.bigDecimalInstance()
     .expression("4 * 4 - var1")
-    .parameter("var1", new BigDecimal(2))
     .build()
+    .parameter("var1", new BigDecimal(2))
     .calc();
 ```
 
@@ -49,8 +49,8 @@ SCalcBuilder.registerGlobalConverter(Money.class, MoneyConverter.class);
 
 Money result = SCalcBuilder.instanceFor(Money.class)
     .expression("var1 - var2")
-    .params("var1", 10.9, "var2", 0.9)
     .build()
+    .params("var1", 10.9, "var2", 0.9)
     .calc();
 ```
 
@@ -58,9 +58,9 @@ Money result = SCalcBuilder.instanceFor(Money.class)
 ```
 Money result = SCalcBuilder.instanceFor(Money.class)
     .expression("(√(16, 4) + 2) / (99.99 - 79.99 - 16)")
-    .params(params)
     .registerConverter(Money.class, MoneyConverter.class)
     .build()
+    .params(params)
     .calc();
 ```
 
@@ -113,8 +113,8 @@ This is the smallest form of expression. You can only enter one single operator,
 ```
 Double result = SCalcBuilder.doubleInstance()
     .expression("+")
-    .params(2, 3, 2)
     .build()
+    .params(2, 3, 2)
     .calc();
 ```
 Result will be 2+3+2=7.
@@ -128,9 +128,9 @@ params.put("b", 2);
     
 BigDecimal result = SCalcBuilder.bigDecimalInstance()
     .expression("a + b * √(16)")
-    .params(params)
     .resultScale(1, RoundingMode.HALF_UP)
     .build()
+    .params(params)
     .calc();
 ```
 Result will be 18.
@@ -139,8 +139,7 @@ You can also use pow chars in your expressions:
 ```
 BigDecimal result = SCalcBuilder.bigDecimalInstance()
     .expression("3² + 2³")
-    .build()
-    .calc();
+    .buildAndCalc();
 ```
 
 ### Definition expressions
@@ -152,8 +151,7 @@ Double result = SCalcBuilder.doubleInstance()
         "g(x)=wurzel(x);" +
         "variable1=7;" +
         "return f(2, 3) + g(4) - variable1;")
-    .build()
-    .calc();
+    .buildAndCalc();
 ```
 Result will be 10.
 
@@ -165,9 +163,9 @@ So what is the sense about using this library? First reason could be a better re
 public void calc_FloatingPoint1() {
     Double result = SCalcBuilder.doubleInstance()
             .expression("a + b")
+            .build()
             .parameter("a", 0.7)
             .parameter("b", 0.1)
-            .build()
             .calc();
 
     Assert.assertEquals(0.8, result, 0);
@@ -175,8 +173,7 @@ public void calc_FloatingPoint1() {
 
     result = SCalcBuilder.doubleInstance()
             .expression("0.9 - 0.1")
-            .build()
-            .calc();
+            .buildAndCalc();
 
     Assert.assertEquals(0.8, result, 0);
     Assert.assertEquals(0.8, 0.9 - 0.1, 0);

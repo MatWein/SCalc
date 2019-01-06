@@ -9,37 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ParamExtractor {
-    public static Map<String, Number> calculateParams(
-            Map<Class<?>, INumberConverter> converters,
-            Map<String, Object> paramsAsMap,
-            Object[] paramsAsArray,
-            boolean removeNullParameters) {
-
-        Map<String, Number> result = new LinkedHashMap<>();
-
-        if (paramsAsMap != null) {
-            for (Map.Entry<String, Object> entry : paramsAsMap.entrySet()) {
-                result.put(entry.getKey(), ToNumberConverter.toNumber(entry.getValue(), converters));
-            }
-        }
-
-        if (paramsAsArray != null && paramsAsArray.length > 0) {
-            if (paramsAsArray[0] instanceof CharSequence) {
-                result.putAll(extractParamsFromNameValuePairs(converters, paramsAsArray));
-            } else {
-                result.putAll(extractParamsWithRandomName(converters, paramsAsArray));
-            }
-        }
-
-        if (removeNullParameters) {
-            //noinspection StatementWithEmptyBody
-            while (result.values().remove(null)) {}
-        }
-
-        return result;
-    }
-
-    private static Map<String, Number> extractParamsWithRandomName(Map<Class<?>, INumberConverter> converters, Object[] paramsAsArray) {
+    public static Map<String, Number> extractParamsWithRandomName(Map<Class<?>, INumberConverter> converters, Object[] paramsAsArray) {
         Map<String, Number> result = new LinkedHashMap<>();
 
         for (Object param : paramsAsArray) {

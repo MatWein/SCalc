@@ -9,10 +9,7 @@ import java.util.Map;
 public class SCalcOptions<RETURN_TYPE> {
     private Class<RETURN_TYPE> returnType;
     private String expression;
-
-    private Map<String, Number> params;
     private Map<Class<?>, INumberConverter> converters;
-
     private int resultScale = 10;
     private RoundingMode resultRoundingMode = RoundingMode.HALF_UP;
     private MathContext resultMathContext = new MathContext(resultScale, resultRoundingMode);
@@ -91,14 +88,6 @@ public class SCalcOptions<RETURN_TYPE> {
 
     public void setExpression(String expression) {
         this.expression = expression;
-    }
-
-    public Map<String, Number> getParams() {
-        return params;
-    }
-
-    public void setParams(Map<String, Number> params) {
-        this.params = params;
     }
 
     public Map<Class<?>, INumberConverter> getConverters() {

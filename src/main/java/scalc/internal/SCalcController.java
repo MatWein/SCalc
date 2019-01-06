@@ -18,23 +18,26 @@ import java.util.regex.Pattern;
 public class SCalcController {
     public static <RETURN_TYPE> RETURN_TYPE calc(SCalc<RETURN_TYPE> sCalc) {
         SCalcOptions<RETURN_TYPE> options = sCalc.getOptions();
-        BigDecimal resolvedValue = calculateResult(options);
+        BigDecimal resolvedValue = calculateResult(sCalc);
         resolvedValue = resolvedValue.setScale(options.getResultScale(), options.getResultRoundingMode());
 
         return ToNumberConverter.toResultType(resolvedValue, options.getReturnType(), options.getConverters());
     }
 
-    private static <RETURN_TYPE> BigDecimal calculateResult(SCalcOptions<RETURN_TYPE> options) {
+    private static <RETURN_TYPE> BigDecimal calculateResult(SCalc<RETURN_TYPE> sCalc) {
+        SCalcOptions<RETURN_TYPE> options = sCalc.getOptions();
+        Map<String, Number> params = sCalc.getParams();
         String expression = options.getExpression();
+
         if (expression.equals("+") || expression.equals("-") || expression.equals("*") || expression.equals("/") || expression.equals("^")) {
-            return parseSingleOperatorExpression(expression, options.getCalculationMathContext(), options.getParams());
+            return parseSingleOperatorExpression(expression, options.getCalculationMathContext(), params);
         }
 
         if (expression.contains(";")) {
-            return parseDefinition(options);
+            return parseDefinition(sCalc);
         }
 
-        String resolvedExpression = resolveExpression(options.getCalculationMathContext(), expression, options.getParams());
+        String resolvedExpression = resolveExpression(options.getCalculationMathContext(), expression, params);
         SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options.getCalculationMathContext());
         return executor.parse();
     }
@@ -63,8 +66,9 @@ public class SCalcController {
         return result;
     }
 
-    private static BigDecimal parseDefinition(final SCalcOptions<?> options) {
-        final Map<String, Number> customParams = new LinkedHashMap<>(options.getParams());
+    private static BigDecimal parseDefinition(SCalc<?> sCalc) {
+        final SCalcOptions<?> options = sCalc.getOptions();
+        final Map<String, Number> customParams = new LinkedHashMap<>(sCalc.getParams());
         final Map<String, FunctionImpl> customFunctions = new HashMap<>();
 
         String[] definitions = options.getExpression().split(";");
