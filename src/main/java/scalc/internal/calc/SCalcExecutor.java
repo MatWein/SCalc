@@ -1,4 +1,4 @@
-package scalc.internal;
+package scalc.internal.calc;
 
 import scalc.exceptions.CalculationException;
 import scalc.internal.functions.FunctionImpl;

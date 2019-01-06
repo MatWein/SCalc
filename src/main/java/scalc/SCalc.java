@@ -2,7 +2,7 @@ package scalc;
 
 import scalc.exceptions.CalculationException;
 import scalc.internal.ParamExtractor;
-import scalc.internal.SCalcController;
+import scalc.internal.calc.SCalcController;
 import scalc.internal.converter.ToNumberConverter;
 
 import java.util.Collection;
