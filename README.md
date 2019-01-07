@@ -13,7 +13,7 @@ SCalc is available as maven dependency:
 
 ## Usage
 ### General
-Every calculation start with the SCalcBuilder:
+Every calculation starts with the SCalcBuilder:
 ```
 Double result = SCalcBuilder.doubleInstance()
     .expression("a + b - c")
