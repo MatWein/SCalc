@@ -1,11 +1,11 @@
 package scalc.internal.calc;
 
+import scalc.SCalcOptions;
 import scalc.exceptions.CalculationException;
 import scalc.internal.functions.FunctionImpl;
 import scalc.internal.functions.Functions;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,24 +14,24 @@ import java.util.Map;
 public class SCalcExecutor {
     private final String expression;
     private final Map<String, FunctionImpl> customFunctions;
-    private final MathContext mathContext;
+    private final SCalcOptions<?> options;
 
     private int pos = -1;
     private char currentChar;
 
-    public SCalcExecutor(String expression, MathContext mathContext) {
-        this(expression, mathContext, new HashMap<String, FunctionImpl>(0));
+    public SCalcExecutor(String expression, SCalcOptions<?> options) {
+        this(expression, options, new HashMap<String, FunctionImpl>(0));
     }
 
-    public SCalcExecutor(String expression, MathContext mathContext, Map<String, FunctionImpl> customFunctions) {
-        this.mathContext = mathContext;
+    public SCalcExecutor(String expression, SCalcOptions<?> options, Map<String, FunctionImpl> customFunctions) {
+        this.options = options;
         this.expression = expression.trim();
         this.customFunctions = customFunctions;
     }
 
     BigDecimal parse() {
         if (expression == null || expression.trim().length() == 0) {
-            return new BigDecimal(0, mathContext);
+            return new BigDecimal(0).setScale(options.getCalculationScale(), options.getCalculationRoundingMode());
         }
 
         nextChar();
@@ -53,7 +53,7 @@ public class SCalcExecutor {
         BigDecimal x = parseFactor();
         for (; ; ) {
             if (eat('*')) x = x.multiply(parseFactor());
-            else if (eat('/')) x = x.divide(parseFactor(), mathContext);
+            else if (eat('/')) x = x.divide(parseFactor(), options.getCalculationScale(), options.getCalculationRoundingMode());
             else return x;
         }
     }
@@ -70,7 +70,7 @@ public class SCalcExecutor {
             eat(')');
         } else if (calculateIsValidNumberChar()) {
             while (calculateIsValidNumberChar()) nextChar();
-            x = new BigDecimal(expression.substring(startPos, this.pos), mathContext);
+            x = new BigDecimal(expression.substring(startPos, this.pos)).setScale(options.getCalculationScale(), options.getCalculationRoundingMode());
         } else if (Functions.calculateIsValidFunctionChar(currentChar)) {
             while (Functions.calculateIsValidFunctionChar(currentChar)) nextChar();
             String func = expression.substring(startPos, this.pos);
@@ -95,18 +95,18 @@ public class SCalcExecutor {
                 throw new CalculationException("Unknown function: " + func);
             }
 
-            x = funcImpl.call(mathContext, factors);
+            x = funcImpl.call(options, factors);
         } else {
             throw new CalculationException("Unexpected: " + currentChar);
         }
 
-        if (eat('^')) x = calulatePow(x, parseFactor(), mathContext);
+        if (eat('^')) x = calulatePow(x, parseFactor(), options);
 
         return x;
     }
 
-    public static BigDecimal calulatePow(BigDecimal value, BigDecimal power, MathContext mathContext) {
-        return new BigDecimal(Math.pow(value.doubleValue(), power.doubleValue()), mathContext);
+    public static BigDecimal calulatePow(BigDecimal value, BigDecimal power, SCalcOptions<?> options) {
+        return new BigDecimal(Math.pow(value.doubleValue(), power.doubleValue())).setScale(options.getCalculationScale(), options.getCalculationRoundingMode());
     }
 
     private List<BigDecimal> parseExpressions() {

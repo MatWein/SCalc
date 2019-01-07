@@ -2,7 +2,6 @@ package scalc;
 
 import scalc.internal.converter.INumberConverter;
 
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Map;
 
@@ -12,10 +11,8 @@ public class SCalcOptions<RETURN_TYPE> {
     private Map<Class<?>, INumberConverter> converters;
     private int resultScale = 10;
     private RoundingMode resultRoundingMode = RoundingMode.HALF_UP;
-    private MathContext resultMathContext = new MathContext(resultScale, resultRoundingMode);
     private int calculationScale = 10;
     private RoundingMode calculationRoundingMode = RoundingMode.HALF_UP;
-    private MathContext calculationMathContext = new MathContext(calculationScale, calculationRoundingMode);
     private boolean removeNullParameters = true;
 
     public Class<RETURN_TYPE> getReturnType() {
@@ -42,14 +39,6 @@ public class SCalcOptions<RETURN_TYPE> {
         this.resultRoundingMode = resultRoundingMode;
     }
 
-    public MathContext getResultMathContext() {
-        return resultMathContext;
-    }
-
-    void setResultMathContext(MathContext resultMathContext) {
-        this.resultMathContext = resultMathContext;
-    }
-
     public int getCalculationScale() {
         return calculationScale;
     }
@@ -64,14 +53,6 @@ public class SCalcOptions<RETURN_TYPE> {
 
     void setCalculationRoundingMode(RoundingMode calculationRoundingMode) {
         this.calculationRoundingMode = calculationRoundingMode;
-    }
-
-    public MathContext getCalculationMathContext() {
-        return calculationMathContext;
-    }
-
-    void setCalculationMathContext(MathContext calculationMathContext) {
-        this.calculationMathContext = calculationMathContext;
     }
 
     public boolean isRemoveNullParameters() {

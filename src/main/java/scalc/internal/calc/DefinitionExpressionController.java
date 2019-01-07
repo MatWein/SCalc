@@ -6,7 +6,6 @@ import scalc.exceptions.CalculationException;
 import scalc.internal.functions.FunctionImpl;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,8 +40,8 @@ public class DefinitionExpressionController {
             String definition) {
 
         String expression = definition.trim().substring("return".length());
-        String resolvedExpression = resolveExpression(options.getCalculationMathContext(), expression, customParams);
-        SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options.getCalculationMathContext(), customFunctions);
+        String resolvedExpression = resolveExpression(options, expression, customParams);
+        SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options, customFunctions);
         return executor.parse();
     }
 
@@ -87,7 +86,7 @@ public class DefinitionExpressionController {
 
         customFunctions.put(name, new FunctionImpl() {
             @Override
-            public BigDecimal call(MathContext mathContext, List<BigDecimal> functionParams) {
+            public BigDecimal call(SCalcOptions<?> options, List<BigDecimal> functionParams) {
                 Map<String, Number> functionParamsAsMap = new LinkedHashMap<>(customParams);
                 for (int i = 0; i < functionParams.size(); i++) {
                     String paramName = parameterNames[i].trim();
@@ -96,8 +95,8 @@ public class DefinitionExpressionController {
                     functionParamsAsMap.put(paramName, paramValue);
                 }
 
-                String resolvedExpression = resolveExpression(mathContext, expression, functionParamsAsMap);
-                SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options.getCalculationMathContext(), customFunctions);
+                String resolvedExpression = resolveExpression(options, expression, functionParamsAsMap);
+                SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options, customFunctions);
                 return executor.parse();
             }
         });
@@ -110,8 +109,8 @@ public class DefinitionExpressionController {
             String variableOrFunctionName,
             String expression) {
 
-        String resolvedExpression = resolveExpression(options.getCalculationMathContext(), expression, customParams);
-        SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options.getCalculationMathContext(), customFunctions);
+        String resolvedExpression = resolveExpression(options, expression, customParams);
+        SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options, customFunctions);
         BigDecimal result = executor.parse();
 
         customParams.put(variableOrFunctionName, result);

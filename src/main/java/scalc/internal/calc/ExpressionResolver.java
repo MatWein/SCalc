@@ -1,25 +1,25 @@
 package scalc.internal.calc;
 
+import scalc.SCalcOptions;
 import scalc.internal.constants.Constants;
 import scalc.internal.converter.NumberTypeConverter;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class ExpressionResolver {
-    public static String resolveExpression(MathContext mathContext, String expression, Map<String, Number> params) {
+    public static String resolveExpression(SCalcOptions<?> options, String expression, Map<String, Number> params) {
         expression = replaceGivenParamsInExpression(expression, params);
         expression = replaceAllParamsConstant(expression, params);
-        expression = replaceGlobalConstants(mathContext, expression);
+        expression = replaceGlobalConstants(options, expression);
 
         return expression;
     }
 
-    private static String replaceGlobalConstants(MathContext mathContext, String expression) {
-        Map<String, Number> constants = Constants.getPredefinedConstants(mathContext);
+    private static String replaceGlobalConstants(SCalcOptions<?> options, String expression) {
+        Map<String, Number> constants = Constants.getPredefinedConstants(options);
 
         for (Map.Entry<String, Number> entry : constants.entrySet()) {
             expression = replaceWord(expression, entry.getKey(), entry.getValue().toString());

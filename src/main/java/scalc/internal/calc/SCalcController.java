@@ -27,7 +27,7 @@ public class SCalcController {
         String expression = options.getExpression();
 
         if (expression.equals("+") || expression.equals("-") || expression.equals("*") || expression.equals("/") || expression.equals("^")) {
-            return parseSingleOperatorExpression(expression, options.getCalculationMathContext(), params);
+            return parseSingleOperatorExpression(expression, options, params);
         } else if (expression.contains(";")) {
             return parseDefinitionExpression(sCalc);
         } else {

@@ -4,7 +4,6 @@ import scalc.exceptions.CalculationException;
 import scalc.internal.converter.INumberConverter;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
@@ -115,7 +114,6 @@ public class SCalcBuilder<RETURN_TYPE> {
     public SCalcBuilder<RETURN_TYPE> resultScale(int scale, RoundingMode roundingMode) {
         this.options.setResultScale(scale);
         this.options.setResultRoundingMode(roundingMode);
-        this.options.setResultMathContext(new MathContext(scale, roundingMode));
         return this;
     }
 
@@ -137,7 +135,6 @@ public class SCalcBuilder<RETURN_TYPE> {
     public SCalcBuilder<RETURN_TYPE> calculationScale(int scale, RoundingMode roundingMode) {
         this.options.setCalculationScale(scale);
         this.options.setCalculationRoundingMode(roundingMode);
-        this.options.setCalculationMathContext(new MathContext(scale, roundingMode));
         return this;
     }
 

@@ -477,4 +477,15 @@ public class SCalcTest {
 
         Assert.assertEquals(576000.0, result, 0);
     }
+	
+	@Test
+	public void calc_Scale() {
+		Double result = SCalcBuilder.doubleInstance()
+				.expression("root(11) * 100000")
+				.calculationScale(4)
+				.buildAndCalc();
+		
+		Assert.assertEquals(331660.0, result, 0);
+		System.err.println(Math.sqrt(11));
+	}
 }

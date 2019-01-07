@@ -1,18 +1,18 @@
 package scalc.internal.calc;
 
+import scalc.SCalcOptions;
 import scalc.exceptions.CalculationException;
 import scalc.internal.converter.NumberTypeConverter;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class SingleOperatorExpressionController {
-    public static BigDecimal parseSingleOperatorExpression(String expression, MathContext mathContext, Map<String, Number> params) {
+    public static BigDecimal parseSingleOperatorExpression(String expression, SCalcOptions<?> options, Map<String, Number> params) {
         if (params == null || params.isEmpty()) {
-            return new BigDecimal(0, mathContext);
+            return new BigDecimal(0).setScale(options.getCalculationScale(), options.getCalculationRoundingMode());
         }
 
         List<Number> paramsInOrder = new ArrayList<>(params.values());
@@ -25,8 +25,8 @@ public class SingleOperatorExpressionController {
                 case "+": result = result.add(value); break;
                 case "-": result = result.subtract(value); break;
                 case "*": result = result.multiply(value); break;
-                case "/": result = result.divide(value, mathContext); break;
-                case "^": result = SCalcExecutor.calulatePow(result, value, mathContext); break;
+                case "/": result = result.divide(value, options.getCalculationScale(), options.getCalculationRoundingMode()); break;
+                case "^": result = SCalcExecutor.calulatePow(result, value, options); break;
                 default: throw new CalculationException("Expression invalid.");
             }
         }
