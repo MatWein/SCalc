@@ -488,4 +488,19 @@ public class SCalcTest {
 		Assert.assertEquals(331660.0, result, 0);
 		System.err.println(Math.sqrt(11));
 	}
+	
+	@Test(expected = CalculationException.class)
+	public void calc_DivisionByZero() {
+    	try {
+		    SCalcBuilder.bigDecimalInstance()
+				    .expression("(var1 / var2) + 77")
+				    .build()
+				    .parameter("var1", 100.0)
+				    .parameter("var2", 0.0)
+				    .calc();
+	    } catch (Throwable e) {
+		    e.printStackTrace();
+    		throw e;
+	    }
+	}
 }

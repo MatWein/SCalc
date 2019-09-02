@@ -30,10 +30,9 @@ public class SCalc<RETURN_TYPE> {
             RETURN_TYPE result = SCalcController.calc(this);
             this.reset();
             return result;
-        } catch (CalculationException e) {
-            throw e;
         } catch (Throwable e) {
-            throw new CalculationException("Unexpected error on calculation.", e);
+        	String message = String.format("Unexpected error on calculation of expression: %s using params: %s", options.getExpression(), params);
+            throw new CalculationException(message, e);
         }
     }
 

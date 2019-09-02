@@ -34,10 +34,15 @@ public class SCalcExecutor {
             return new BigDecimal(0).setScale(options.getCalculationScale(), options.getCalculationRoundingMode());
         }
 
-        nextChar();
-        BigDecimal x = parseExpression();
-        if (pos < expression.length()) throw new CalculationException("Unexpected: " + currentChar);
-        return x;
+        try {
+	        nextChar();
+	        BigDecimal x = parseExpression();
+	        if (pos < expression.length()) throw new CalculationException("Unexpected: " + currentChar);
+	        return x;
+        } catch (Throwable e) {
+        	String message = String.format("Unexpected error on calculation of expression: %s", expression);
+	        throw new CalculationException(message, e);
+        }
     }
 
     private BigDecimal parseExpression() {
