@@ -4,13 +4,6 @@ Simple calculation library to parse and calculate math expressions.
 Internal calculation will be performed with BigDecimal's to avoid floating point errors.
 
 
-## Maven
-SCalc is available as maven dependency:
-```
-<not yet finished>
-```
-
-
 ## Usage
 ### General
 Every calculation starts with the SCalcBuilder:
