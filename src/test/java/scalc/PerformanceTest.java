@@ -13,7 +13,6 @@ public class PerformanceTest {
                 .expression("f(a, b)=√(a² - (b² / 2)); return f(a, b);")
                 .resultScale(64)
                 .calculationScale(64)
-                .removeNullParameters(true)
                 .build();
     }
 

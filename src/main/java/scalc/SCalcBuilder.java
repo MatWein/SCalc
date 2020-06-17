@@ -87,16 +87,6 @@ public class SCalcBuilder<RETURN_TYPE> {
     }
 
     /**
-     * [OPTIONAL] Specifies if null parameters are ignored. If false then null will be interpreted as 0.0.<br/>
-     * Default: true
-     * @param removeNullParameters true if you want to ignore null values
-     */
-    public SCalcBuilder<RETURN_TYPE> removeNullParameters(boolean removeNullParameters) {
-        this.options.setRemoveNullParameters(removeNullParameters);
-        return this;
-    }
-
-    /**
      * [OPTIONAL] Specifies the scale of the result. This scale will only be used for rounding the result number. Internal calculation can use another scale!<br/>
      * Default: 10
      * @param scale Scale to use for the result and only for the result

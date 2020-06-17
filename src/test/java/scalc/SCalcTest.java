@@ -126,19 +126,17 @@ public class SCalcTest {
     public void calc_MultiplyAll() {
         Double result = SCalcBuilder.doubleInstance()
                 .expression("*")
-                .removeNullParameters(true)
                 .build()
                 .params(2, 3, null, 4)
                 .calc();
 
-        Assert.assertEquals(24.0, result, 0);
+        Assert.assertEquals(0.0, result, 0);
     }
 
     @Test
     public void calc_NotRemoveNullParameters() {
         Double result = SCalcBuilder.doubleInstance()
                 .expression("*")
-                .removeNullParameters(false)
                 .build()
                 .params(2, 3, null, 4)
                 .calc();
@@ -502,5 +500,42 @@ public class SCalcTest {
 		    e.printStackTrace();
     		throw e;
 	    }
+	}
+	
+	@Test
+	public void testNullParameter() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("AVG(anleihen, investmentfonds, aktien, hedgefonds, optionsscheine, zertifikate, beteiligungen)")
+				.resultScale(2, RoundingMode.HALF_UP)
+				.build()
+				.parameter("anleihen", 1.0)
+				.parameter("investmentfonds", 2.0)
+				.parameter("aktien", 3.0)
+				.parameter("hedgefonds", null)
+				.parameter("optionsscheine", 1.0)
+				.parameter("zertifikate", 2.0)
+				.parameter("beteiligungen", 3.0)
+				.calc();
+		
+		Assert.assertEquals(12.0 / 7.0, result, 0.01);
+	}
+	
+	@Test
+	public void testNullParameter_FirstPlace() {
+		int result = SCalcBuilder.doubleInstance()
+				.expression("AVG(anleihen, investmentfonds, aktien, hedgefonds, optionsscheine, zertifikate, beteiligungen)")
+				.resultScale(0, RoundingMode.HALF_UP)
+				.build()
+				.parameter("anleihen", null)
+				.parameter("investmentfonds", null)
+				.parameter("aktien", null)
+				.parameter("hedgefonds", null)
+				.parameter("optionsscheine", null)
+				.parameter("zertifikate", null)
+				.parameter("beteiligungen", null)
+				.calc()
+				.intValue();
+		
+		Assert.assertEquals(0, result);
 	}
 }

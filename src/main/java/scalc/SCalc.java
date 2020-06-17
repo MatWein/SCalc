@@ -42,9 +42,6 @@ public class SCalc<RETURN_TYPE> {
      */
     public SCalc<RETURN_TYPE> params(Map<String, Object> params) {
         for (Map.Entry<String, Object> entry : params.entrySet()) {
-            if (options.isRemoveNullParameters() && entry.getValue() == null) {
-                continue;
-            }
             this.params.put(entry.getKey(), ToNumberConverter.toNumber(entry.getValue(), options.getConverters()));
         }
         return this;
@@ -64,11 +61,6 @@ public class SCalc<RETURN_TYPE> {
                 this.params.putAll(ParamExtractor.extractParamsFromNameValuePairs(options.getConverters(), paramsAsArray));
             } else {
                 this.params.putAll(ParamExtractor.extractParamsWithRandomName(options.getConverters(), paramsAsArray));
-            }
-
-            if (options.isRemoveNullParameters()) {
-                //noinspection StatementWithEmptyBody
-                while (this.params.values().remove(null)) {}
             }
         }
 
@@ -94,10 +86,6 @@ public class SCalc<RETURN_TYPE> {
      * @param value Value of the param as java.lang.Number or custom type.
      */
     public SCalc<RETURN_TYPE> parameter(String name, Object value) {
-        if (options.isRemoveNullParameters() && value == null) {
-            return this;
-        }
-
         this.params.put(name, ToNumberConverter.toNumber(value, options.getConverters()));
         return this;
     }

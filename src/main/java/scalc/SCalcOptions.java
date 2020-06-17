@@ -13,7 +13,6 @@ public class SCalcOptions<RETURN_TYPE> {
     private RoundingMode resultRoundingMode = RoundingMode.HALF_UP;
     private int calculationScale = 10;
     private RoundingMode calculationRoundingMode = RoundingMode.HALF_UP;
-    private boolean removeNullParameters = true;
 
     public Class<RETURN_TYPE> getReturnType() {
         return returnType;
@@ -53,14 +52,6 @@ public class SCalcOptions<RETURN_TYPE> {
 
     void setCalculationRoundingMode(RoundingMode calculationRoundingMode) {
         this.calculationRoundingMode = calculationRoundingMode;
-    }
-
-    public boolean isRemoveNullParameters() {
-        return removeNullParameters;
-    }
-
-    void setRemoveNullParameters(boolean removeNullParameters) {
-        this.removeNullParameters = removeNullParameters;
     }
 
     public String getExpression() {

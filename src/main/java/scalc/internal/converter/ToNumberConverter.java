@@ -9,7 +9,7 @@ import java.util.Map;
 public class ToNumberConverter {
     public static Number toNumber(Object object, Map<Class<?>, INumberConverter> converters) {
         if (object == null) {
-            return null;
+            return 0.0;
         }
 
         if (object instanceof Number) {
