@@ -538,4 +538,40 @@ public class SCalcTest {
 		
 		Assert.assertEquals(0, result);
 	}
+	
+	@Test
+	public void testNullParameter_Round_OneParam() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("round(0.5)")
+				.buildAndCalc();
+		
+		Assert.assertEquals(0.5, result, 0);
+	}
+	
+	@Test
+	public void testNullParameter_Round_TwoParams() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("round(0.5, 0)")
+				.buildAndCalc();
+		
+		Assert.assertEquals(1.0, result, 0);
+	}
+	
+	@Test
+	public void testNullParameter_Round_ThreeParams() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("round(0.5, 0, HALF_DOWN)")
+				.buildAndCalc();
+		
+		Assert.assertEquals(0.0, result, 0);
+	}
+	
+	@Test
+	public void testNullParameter_Round_ThreeParams2() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("round(0.999999999, 4, HALF_UP)")
+				.buildAndCalc();
+		
+		Assert.assertEquals(1.0, result, 0);
+	}
 }

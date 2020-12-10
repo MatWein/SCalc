@@ -84,7 +84,10 @@ aliases: durchschnitt
 example: avg(16, 4, 24, 1) = 11.25  
 - abs(value)  
 description: Returns the absolute number of the given parameter.  
-example: abs(-16) = 16  
+example: abs(-16) = 16
+- round(value, scale=2, roundingMode=HALF_UP)  
+description: Sets the rounding scale for a given value.  
+example: round(22.999999), round(0.12121212, 4), round(0.5, 1, HALF_DOWN)
 
 ### Constants
 - PI  

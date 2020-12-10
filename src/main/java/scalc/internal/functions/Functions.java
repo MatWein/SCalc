@@ -26,6 +26,8 @@ public class Functions {
         functions.put("max", MaxFunction.INSTANCE);
         functions.put("min", MinFunction.INSTANCE);
         functions.put("abs", AbsFunction.INSTANCE);
+        
+        functions.put("round", RoundFunction.INSTANCE);
 
         return functions;
     }
