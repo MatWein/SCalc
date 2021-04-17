@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Builder class for the SCalc calculator.
@@ -139,6 +140,27 @@ public class SCalcBuilder<RETURN_TYPE> {
     public SCalcBuilder<RETURN_TYPE> resultScale(int scale, RoundingMode roundingMode) {
         this.options.setResultScale(scale);
         this.options.setResultRoundingMode(roundingMode);
+        return this;
+    }
+    
+    /**
+     * [OPTIONAL] Specifies debug mode.<br/>
+     * Default: false
+     * @param debug If true, calculation steps are logged to debug logger or if null to system out.
+     */
+    public SCalcBuilder<RETURN_TYPE> debug(boolean debug) {
+        this.options.setDebug(debug);
+        return this;
+    }
+    
+    /**
+     * [OPTIONAL] Specifies debug logger.<br/>
+     * Default: null (system out)
+     * @param debugLogger If debug mode is set to true, this consumer is used to print log statements.
+     *                    Usually this will be only a delegate to the logger of slf4j or other custom loggers.
+     */
+    public SCalcBuilder<RETURN_TYPE> debugLogger(Consumer<String> debugLogger) {
+        this.options.setDebugLogger(debugLogger);
         return this;
     }
 

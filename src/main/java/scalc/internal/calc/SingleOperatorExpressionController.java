@@ -3,6 +3,7 @@ package scalc.internal.calc;
 import scalc.SCalcExpressions;
 import scalc.SCalcOptions;
 import scalc.exceptions.CalculationException;
+import scalc.internal.SCalcLogger;
 import scalc.internal.converter.NumberTypeConverter;
 
 import java.math.BigDecimal;
@@ -31,6 +32,10 @@ public class SingleOperatorExpressionController {
                 default: throw new CalculationException("Expression invalid.");
             }
         }
+    
+        SCalcLogger.debug(options,
+                "Calculated single operator expression. Expression: '%s'. Params: '%s'. Result: %s",
+                expression, params, result);
 
         return result;
     }

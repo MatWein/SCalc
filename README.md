@@ -213,3 +213,21 @@ public void calc_FloatingPoint1() {
 If you simply write 0.7 + 0.1 in Java the result will be 0.7999999999999999. If you now multiply this with a larger number, your result will be wrong. SCalc avoids this problem by using BigDecimals for internal calculation.
 
 Another reason is, that you can specify the calculation precision. Per default all calculation will be done with a scale of 10 and the result also will be rounded (HALF_UP) to 10 digits.
+
+## Debugging
+SCalc can print calculation steps if needed. Example:
+```
+double result = SCalcBuilder.doubleInstance()
+    .expression("summe_alle = sum(ALL_PARAMS); faktor(x) = param0 * param2 * x; return summe_alle / faktor(3);")
+    .debug(true)
+    .debugLogger(message -> System.out.println(message))
+    .build()
+    .paramsAsCollection(TestDto::getValueToExtract, dtos)
+    .calc();
+```
+
+## Java compatibility
+SCalc Version | Compatible with Java Versions
+--- | ---
+\<= 1.2.0 | \>= 7
+\>= 1.3.0 | \>= 8

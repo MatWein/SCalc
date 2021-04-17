@@ -3,12 +3,12 @@ package scalc.internal.calc;
 import scalc.SCalc;
 import scalc.SCalcOptions;
 import scalc.exceptions.CalculationException;
+import scalc.internal.SCalcLogger;
 import scalc.internal.functions.FunctionImpl;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,10 +39,16 @@ public class DefinitionExpressionController {
             Map<String, FunctionImpl> customFunctions,
             String definition) {
 
-        String expression = definition.trim().substring("return".length());
+        String expression = definition.trim().substring("return".length()).trim();
         String resolvedExpression = resolveExpression(options, expression, customParams);
         SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options, customFunctions);
-        return executor.parse();
+        BigDecimal result = executor.parse();
+    
+        SCalcLogger.debug(options,
+                "Calculated return statement. Expression: '%s'. Resolved expression: '%s'. Result: %s",
+                expression, resolvedExpression, result);
+        
+        return result;
     }
 
     private static void assignVariableOrFunction(
@@ -64,41 +70,43 @@ public class DefinitionExpressionController {
             if (isVariable) {
                 assignVariable(options, customParams, customFunctions, variableOrFunctionName, expression);
             } else {
-                assignFunction(options, customParams, customFunctions, variableOrFunctionName, expression);
+                assignFunction(customParams, customFunctions, variableOrFunctionName, expression);
             }
         }
     }
 
     private static void assignFunction(
-            final SCalcOptions<?> options,
             final Map<String, Number> customParams,
             final Map<String, FunctionImpl> customFunctions,
-            final String variableOrFunctionName,
+            final String functionName,
             final String expression) {
 
-        Matcher matcher = Pattern.compile("(.*?)\\((.*?)\\)").matcher(variableOrFunctionName);
+        Matcher matcher = Pattern.compile("(.*?)\\((.*?)\\)").matcher(functionName);
         if (!matcher.find()) {
-            throw new CalculationException("Function definition invalid: " + variableOrFunctionName);
+            throw new CalculationException("Function definition invalid: " + functionName);
         }
 
         final String name = matcher.group(1);
         final String[] parameterNames = matcher.group(2).split(",");
 
-        customFunctions.put(name, new FunctionImpl() {
-            @Override
-            public BigDecimal call(SCalcOptions<?> options, List<BigDecimal> functionParams) {
-                Map<String, Number> functionParamsAsMap = new LinkedHashMap<>(customParams);
-                for (int i = 0; i < functionParams.size(); i++) {
-                    String paramName = parameterNames[i].trim();
-                    BigDecimal paramValue = functionParams.get(i);
+        customFunctions.put(name, (options, functionParams) -> {
+            Map<String, Number> functionParamsAsMap = new LinkedHashMap<>(customParams);
+            for (int i = 0; i < functionParams.size(); i++) {
+                String paramName = parameterNames[i].trim();
+                BigDecimal paramValue = functionParams.get(i);
 
-                    functionParamsAsMap.put(paramName, paramValue);
-                }
-
-                String resolvedExpression = resolveExpression(options, expression, functionParamsAsMap);
-                SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options, customFunctions);
-                return executor.parse();
+                functionParamsAsMap.put(paramName, paramValue);
             }
+
+            String resolvedExpression = resolveExpression(options, expression, functionParamsAsMap);
+            SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options, customFunctions);
+            BigDecimal result = executor.parse();
+    
+            SCalcLogger.debug(options,
+                    "Calculated function: '%s'. Expression: '%s'. Resolved expression: '%s'. Result: %s",
+                    functionName, expression, resolvedExpression, result);
+            
+            return result;
         });
     }
 
@@ -106,13 +114,17 @@ public class DefinitionExpressionController {
             SCalcOptions<?> options,
             Map<String, Number> customParams,
             Map<String, FunctionImpl> customFunctions,
-            String variableOrFunctionName,
+            String variableName,
             String expression) {
 
         String resolvedExpression = resolveExpression(options, expression, customParams);
         SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options, customFunctions);
         BigDecimal result = executor.parse();
-
-        customParams.put(variableOrFunctionName, result);
+    
+        SCalcLogger.debug(options,
+                "Calculated variable: '%s'. Expression: '%s'. Resolved expression: '%s'. Result: %s",
+                variableName, expression, resolvedExpression, result);
+        
+        customParams.put(variableName, result);
     }
 }

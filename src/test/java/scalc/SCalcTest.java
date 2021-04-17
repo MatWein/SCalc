@@ -10,10 +10,7 @@ import scalc.test.model.TestDto;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class SCalcTest {
     @Test
@@ -660,5 +657,24 @@ public class SCalcTest {
 				.buildAndCalc();
 		
 		Assert.assertEquals(0.77815125038, result, 0.00001);
+	}
+	
+	@Test
+	public void testAllParamsConstant() {
+		List<TestDto> dtos = new ArrayList<>();
+		dtos.add(new TestDto(10.0));
+		dtos.add(new TestDto(20.0));
+		dtos.add(new TestDto(30.0));
+		dtos.add(new TestDto(40.0));
+		
+		double result = SCalcBuilder.doubleInstance()
+				.expression("summe_alle = sum(ALL_PARAMS); faktor(x) = param0 * param2 * x; return summe_alle / faktor(3);")
+				.debug(true)
+				.debugLogger(message -> System.out.println(message))
+				.build()
+				.paramsAsCollection(TestDto::getValueToExtract, dtos)
+				.calc();
+		
+		Assert.assertEquals(0.11111111111, result, 0.00001);
 	}
 }

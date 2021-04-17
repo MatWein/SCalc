@@ -4,6 +4,7 @@ import scalc.internal.converter.INumberConverter;
 
 import java.math.RoundingMode;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class SCalcOptions<RETURN_TYPE> {
     private Class<RETURN_TYPE> returnType;
@@ -13,6 +14,8 @@ public class SCalcOptions<RETURN_TYPE> {
     private RoundingMode resultRoundingMode = RoundingMode.HALF_UP;
     private int calculationScale = 10;
     private RoundingMode calculationRoundingMode = RoundingMode.HALF_UP;
+    private boolean debug = false;
+    private Consumer<String> debugLogger = System.out::println;
 
     public Class<RETURN_TYPE> getReturnType() {
         return returnType;
@@ -68,5 +71,21 @@ public class SCalcOptions<RETURN_TYPE> {
 
     public void setConverters(Map<Class<?>, INumberConverter> converters) {
         this.converters = converters;
+    }
+    
+    public boolean isDebug() {
+        return debug;
+    }
+    
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+    
+    public Consumer<String> getDebugLogger() {
+        return debugLogger;
+    }
+    
+    public void setDebugLogger(Consumer<String> debugLogger) {
+        this.debugLogger = debugLogger;
     }
 }

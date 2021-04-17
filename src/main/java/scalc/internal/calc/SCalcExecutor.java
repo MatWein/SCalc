@@ -2,6 +2,7 @@ package scalc.internal.calc;
 
 import scalc.SCalcOptions;
 import scalc.exceptions.CalculationException;
+import scalc.internal.SCalcLogger;
 import scalc.internal.functions.FunctionImpl;
 import scalc.internal.functions.Functions;
 
@@ -20,7 +21,7 @@ public class SCalcExecutor {
     private char currentChar;
 
     public SCalcExecutor(String expression, SCalcOptions<?> options) {
-        this(expression, options, new HashMap<String, FunctionImpl>(0));
+        this(expression, options, new HashMap<>(0));
     }
 
     public SCalcExecutor(String expression, SCalcOptions<?> options, Map<String, FunctionImpl> customFunctions) {
@@ -48,8 +49,22 @@ public class SCalcExecutor {
     private BigDecimal parseExpression() {
         BigDecimal x = parseTerm();
         for (; ; ) {
-            if (eat('+')) x = x.add(parseTerm());
-            else if (eat('-')) x = x.subtract(parseTerm());
+            if (eat('+')) {
+                BigDecimal augend = parseTerm();
+                BigDecimal result = x.add(augend);
+                SCalcLogger.debug(options,
+                        "Calculated term. Expression: '+'. Left: '%s'. Right: '%s'. Result: %s",
+                        x, augend, result);
+                x = result;
+            }
+            else if (eat('-')) {
+                BigDecimal subtrahend = parseTerm();
+                BigDecimal result = x.subtract(subtrahend);
+                SCalcLogger.debug(options,
+                        "Calculated term. Expression: '-'. Left: '%s'. Right: '%s'. Result: %s",
+                        x, subtrahend, result);
+                x = result;
+            }
             else return x;
         }
     }
@@ -57,8 +72,22 @@ public class SCalcExecutor {
     private BigDecimal parseTerm() {
         BigDecimal x = parseFactor();
         for (; ; ) {
-            if (eat('*')) x = x.multiply(parseFactor());
-            else if (eat('/')) x = x.divide(parseFactor(), options.getCalculationScale(), options.getCalculationRoundingMode());
+            if (eat('*')) {
+                BigDecimal multiplicand = parseFactor();
+                BigDecimal result = x.multiply(multiplicand);
+                SCalcLogger.debug(options,
+                        "Calculated term. Expression: '*'. Left: '%s'. Right: '%s'. Result: %s",
+                        x, multiplicand, result);
+                x = result;
+            }
+            else if (eat('/')) {
+                BigDecimal divisor = parseFactor();
+                BigDecimal result = x.divide(divisor, options.getCalculationScale(), options.getCalculationRoundingMode());
+                SCalcLogger.debug(options,
+                        "Calculated term. Expression: '/'. Left: '%s'. Right: '%s'. Result: %s",
+                        x, divisor, result);
+                x = result;
+            }
             else return x;
         }
     }
@@ -101,17 +130,28 @@ public class SCalcExecutor {
             }
 
             x = funcImpl.call(options, factors);
+    
+            SCalcLogger.debug(options,
+                    "Call function '%s'. Params: '%s'. Result: %s",
+                    funcImpl.getClass().getSimpleName(), factors, x);
         } else {
             throw new CalculationException("Unexpected: " + currentChar);
         }
 
-        if (eat('^')) x = calulatePow(x, parseFactor(), options);
+        if (eat('^')) {
+            BigDecimal input = parseFactor();
+            BigDecimal result = calulatePow(x, input, options);
+            SCalcLogger.debug(options,
+                    "Calculated term. Expression: '^'. Left: '%s'. Right: '%s'. Result: %s",
+                    x, input, result);
+            x = result;
+        }
 
         return x;
     }
 
     public static BigDecimal calulatePow(BigDecimal value, BigDecimal power, SCalcOptions<?> options) {
-        return new BigDecimal(Math.pow(value.doubleValue(), power.doubleValue())).setScale(options.getCalculationScale(), options.getCalculationRoundingMode());
+        return BigDecimal.valueOf(Math.pow(value.doubleValue(), power.doubleValue())).setScale(options.getCalculationScale(), options.getCalculationRoundingMode());
     }
 
     private List<BigDecimal> parseExpressions() {
