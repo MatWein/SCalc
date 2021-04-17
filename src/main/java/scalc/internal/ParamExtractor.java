@@ -4,25 +4,54 @@ import scalc.exceptions.CalculationException;
 import scalc.internal.converter.INumberConverter;
 import scalc.internal.converter.ToNumberConverter;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class ParamExtractor {
     private static final String DEFAULT_PARAM_NAME = "param";
     
-    public static Map<String, Number> extractParamsWithRandomName(Map<Class<?>, INumberConverter> converters, Object[] paramsAsArray, int startNumber) {
+    public static <T> Map<String, Number> extractParams(
+            Function<T, Object> paramExtractor,
+            Map<Class<?>, INumberConverter> converters,
+            T[] paramsAsArray,
+            int startNumber) {
+        
+        if (paramsAsArray != null && paramsAsArray.length > 0) {
+            if (paramsAsArray[0] instanceof CharSequence) {
+                return ParamExtractor.extractParamsFromNameValuePairs(paramExtractor, converters, paramsAsArray);
+            } else {
+                return ParamExtractor.extractParamsWithDefaultName(paramExtractor, converters, paramsAsArray, startNumber);
+            }
+        }
+        
+        return new HashMap<>();
+    }
+    
+    static <T> Map<String, Number> extractParamsWithDefaultName(
+            Function<T, Object> paramExtractor,
+            Map<Class<?>, INumberConverter> converters,
+            T[] params,
+            int startNumber) {
+        
         Map<String, Number> result = new LinkedHashMap<>();
         int counter = startNumber;
         
-        for (Object param : paramsAsArray) {
-            Number value = ToNumberConverter.toNumber(param, converters);
+        for (T param : params) {
+            Object extractedParam = param == null ? null : paramExtractor.apply(param);
+            Number value = ToNumberConverter.toNumber(extractedParam, converters);
             result.put(DEFAULT_PARAM_NAME + counter++, value);
         }
 
         return result;
     }
-
-    public static Map<String, Number> extractParamsFromNameValuePairs(Map<Class<?>, INumberConverter> converters, Object[] params) {
+    
+    static <T> Map<String, Number> extractParamsFromNameValuePairs(
+            Function<T, Object> paramExtractor,
+            Map<Class<?>, INumberConverter> converters,
+            T[] params) {
+        
         if (params.length % 2 != 0) {
             throw new CalculationException("Params have to be in form: name,value,name2,value2,...");
         }
@@ -35,10 +64,11 @@ public class ParamExtractor {
                 throw new CalculationException(String.format("Invalid param value: '%s'. Has to be a string.", param1));
             }
 
-            Object param2 = params[i + 1];
-
+            T param2 = params[i + 1];
+            Object extractedParam2 = param2 == null ? null : paramExtractor.apply(param2);
+    
             String name = (String) param1;
-            Number value = ToNumberConverter.toNumber(param2, converters);
+            Number value = ToNumberConverter.toNumber(extractedParam2, converters);
 
             result.put(name, value);
         }

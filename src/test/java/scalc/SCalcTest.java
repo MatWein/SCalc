@@ -125,7 +125,7 @@ public class SCalcTest {
     @Test
     public void calc_MultiplyAll() {
         Double result = SCalcBuilder.doubleInstance()
-                .expression("*")
+                .multiplyExpression()
                 .build()
                 .params(2, 3, null, 4)
                 .calc();
@@ -136,7 +136,7 @@ public class SCalcTest {
     @Test
     public void calc_NotRemoveNullParameters() {
         Double result = SCalcBuilder.doubleInstance()
-                .expression("*")
+                .multiplyExpression()
                 .build()
                 .params(2, 3, null, 4)
                 .calc();
@@ -158,18 +158,29 @@ public class SCalcTest {
     @Test
     public void calc_PowAll() {
         Double result = SCalcBuilder.doubleInstance()
-                .expression("^")
+                .powExpression()
                 .build()
                 .params(2, 3, 2)
                 .calc();
 
         Assert.assertEquals(64.0, result, 0);
     }
+	
+	@Test
+	public void calc_DivideAll() {
+		Double result = SCalcBuilder.doubleInstance()
+				.divideExpression()
+				.build()
+				.params(20, 5, 2)
+				.calc();
+		
+		Assert.assertEquals(2.0, result, 0);
+	}
 
     @Test
     public void calc_ParamNameValue() {
         Double result = SCalcBuilder.doubleInstance()
-                .expression("-")
+                .subtractExpression()
                 .build()
                 .params("a", 10, "b", 100, "c", 20)
                 .calc();
@@ -350,7 +361,7 @@ public class SCalcTest {
         dtos.add(new TestDto(10.0));
         dtos.add(new TestDto(5.1));
         dtos.add(null);
-        dtos.add(new TestDto(2));
+        dtos.add(new TestDto(2.0));
 
         INumberConverter<TestDto> numberConverter = new INumberConverter<TestDto>() {
             @Override
@@ -358,7 +369,7 @@ public class SCalcTest {
                 if (input == null) {
                     return null;
                 }
-                return new BigDecimal(input.getValueToExtract()).setScale(2, RoundingMode.HALF_UP);
+                return BigDecimal.valueOf(input.getValueToExtract()).setScale(2, RoundingMode.HALF_UP);
             }
 
             @Override
@@ -585,5 +596,24 @@ public class SCalcTest {
 				.calc();
 		
 		Assert.assertEquals(26.0, result, 0);
+	}
+	
+	@Test
+	public void testParametersWithExtractor() {
+		Set<TestDto> dtos = new HashSet<>();
+		dtos.add(new TestDto(100.0));
+		dtos.add(new TestDto(0.01));
+		dtos.add(null);
+		dtos.add(new TestDto(200.0));
+		dtos.add(new TestDto(null));
+		
+		double result = SCalcBuilder.doubleInstance()
+				.sumExpression()
+				.build()
+				.paramsAsCollection(TestDto::getValueToExtract, dtos)
+				.params(TestDto::getValueToExtract, dtos.toArray(new TestDto[] {}))
+				.calc();
+		
+		Assert.assertEquals(600.02, result, 0);
 	}
 }

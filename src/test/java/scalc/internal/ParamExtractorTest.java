@@ -8,6 +8,7 @@ import scalc.internal.converter.INumberConverter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class ParamExtractorTest {
     private Map<Class<?>, INumberConverter> converters;
@@ -19,18 +20,18 @@ public class ParamExtractorTest {
 
     @Test
     public void extractParamsFromNameValuePairs() {
-        Map<String, Number> result = ParamExtractor.extractParamsFromNameValuePairs(converters, new Object[0]);
+        Map<String, Number> result = ParamExtractor.extractParamsFromNameValuePairs(Function.identity(), converters, new Object[0]);
         Assert.assertTrue(result.isEmpty());
     }
 
     @Test(expected = CalculationException.class)
     public void extractParamsFromNameValuePairs_InvalidPairs() {
-        ParamExtractor.extractParamsFromNameValuePairs(converters, new Object[] { "a" });
+        ParamExtractor.extractParamsFromNameValuePairs(Function.identity(), converters, new Object[] { "a" });
     }
 
     @Test
     public void extractParamsFromNameValuePairs_Result() {
-        Map<String, Number> result = ParamExtractor.extractParamsFromNameValuePairs(converters, new Object[] { "a", 10.1, "b", 2 });
+        Map<String, Number> result = ParamExtractor.extractParamsFromNameValuePairs(Function.identity(), converters, new Object[] { "a", 10.1, "b", 2 });
 
         Assert.assertEquals(2, result.size());
         Assert.assertEquals(10.1, result.get("a"));
@@ -39,11 +40,11 @@ public class ParamExtractorTest {
 
     @Test(expected = CalculationException.class)
     public void extractParamsFromNameValuePairs_InvalidPairsByTypeString() {
-        ParamExtractor.extractParamsFromNameValuePairs(converters, new Object[] { "a", "10.1", "b", 2 });
+        ParamExtractor.extractParamsFromNameValuePairs(Function.identity(), converters, new Object[] { "a", "10.1", "b", 2 });
     }
 
     @Test(expected = CalculationException.class)
     public void extractParamsFromNameValuePairs_InvalidPairsByTypeNumber() {
-        ParamExtractor.extractParamsFromNameValuePairs(converters, new Object[] { 1, 1 });
+        ParamExtractor.extractParamsFromNameValuePairs(Function.identity(), converters, new Object[] { 1, 1 });
     }
 }

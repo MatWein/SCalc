@@ -1,17 +1,17 @@
 package scalc.test.model;
 
 public class TestDto {
-    private double valueToExtract;
+    private Double valueToExtract;
 
-    public TestDto(double valueToExtract) {
+    public TestDto(Double valueToExtract) {
         this.valueToExtract = valueToExtract;
     }
 
-    public double getValueToExtract() {
+    public Double getValueToExtract() {
         return valueToExtract;
     }
 
-    public void setValueToExtract(double valueToExtract) {
+    public void setValueToExtract(Double valueToExtract) {
         this.valueToExtract = valueToExtract;
     }
 }

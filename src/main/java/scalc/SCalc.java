@@ -8,6 +8,7 @@ import scalc.internal.converter.ToNumberConverter;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * The calculator class. Do not create the instance by yourself. Please use SCalcBuilder!
@@ -56,14 +57,21 @@ public class SCalc<RETURN_TYPE> {
      * @param paramsAsArray Params for calculation
      */
     public SCalc<RETURN_TYPE> params(Object... paramsAsArray) {
-        if (paramsAsArray != null && paramsAsArray.length > 0) {
-            if (paramsAsArray[0] instanceof CharSequence) {
-                this.params.putAll(ParamExtractor.extractParamsFromNameValuePairs(options.getConverters(), paramsAsArray));
-            } else {
-                this.params.putAll(ParamExtractor.extractParamsWithRandomName(options.getConverters(), paramsAsArray, this.params.size()));
-            }
-        }
-
+        this.params.putAll(ParamExtractor.extractParams(Function.identity(), options.getConverters(), paramsAsArray, this.params.size()));
+        return this;
+    }
+    
+    /**
+     * [OPTIONAL] Parameters in form of: <br/>
+     * - "name1", 10, "name2", 5, ...<br/>
+     * or<br/>
+     * - 10, 20, 30, ...<br/>
+     * Optional if the expression does not have any params.
+     * @param paramExtractor Function to extract nested properties of the fiven params
+     * @param paramsAsArray Params for calculation
+     */
+    public <T> SCalc<RETURN_TYPE> params(Function<T, Object> paramExtractor, T... paramsAsArray) {
+        this.params.putAll(ParamExtractor.extractParams(paramExtractor, options.getConverters(), paramsAsArray, this.params.size()));
         return this;
     }
 
@@ -77,6 +85,19 @@ public class SCalc<RETURN_TYPE> {
      */
     public SCalc<RETURN_TYPE> paramsAsCollection(Collection<?> params) {
         return params(params.toArray(new Object[] {}));
+    }
+    
+    /**
+     * [OPTIONAL] Parameters in form of: <br/>
+     * - "name1", 10, "name2", 5, ...<br/>
+     * or<br/>
+     * - 10, 20, 30, ...<br/>
+     * Optional if the expression does not have any params.
+     * @param paramExtractor Function to extract nested properties of the fiven params
+     * @param params Params for calculation
+     */
+    public <T> SCalc<RETURN_TYPE> paramsAsCollection(Function<T, Object> paramExtractor, Collection<?> params) {
+        return params(paramExtractor, (T[])params.toArray(new Object[] {}));
     }
 
     /**

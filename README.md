@@ -33,6 +33,16 @@ Parameters for the calculation can be added by using:
 - the .params(...) method. This method can be used in form of .params("a", 10, "b", 100, "c", 20) or to add parameters like .params(10, 100, 20) which will result in param0 = 10, param1 = 100, ...
 - the .paramsAsCollection(collection) method. Same logic as .params(...) method, but takes a collection instead of an array.
 
+Hint: It is also possible to give an extract function to the params... methods to extract nested properties. Example:
+```
+List<TestDto> dtos = new ArrayList<>(); ...
+
+Double result = SCalcBuilder.doubleInstance()
+    .sumExpression()
+    .build()
+    .paramsAsCollection(TestDto::getValueToExtract, dtos)
+    .calc();
+```
 
 ## Custom type converters
 Besides the standard Java types, there is the possibility to define your own types. Important to know is, that there are global type converters and local type converters. Global means that every new instance of SCalc will have it. Local type convertes on the other hand have to be declared on every builder call:
