@@ -85,6 +85,41 @@ public class SCalcBuilder<RETURN_TYPE> {
         this.options.setExpression(rawExpression);
         return this;
     }
+    
+    /**
+     * [REQUIRED] Expression to parse. For further details see documentation.
+     */
+    public SCalcBuilder<RETURN_TYPE> sumExpression() {
+        return expression(SCalcExpressions.SUM_EXPRESSION);
+    }
+    
+    /**
+     * [REQUIRED] Expression to parse. For further details see documentation.
+     */
+    public SCalcBuilder<RETURN_TYPE> subtractExpression() {
+        return expression(SCalcExpressions.SUBTRACT_EXPRESSION);
+    }
+    
+    /**
+     * [REQUIRED] Expression to parse. For further details see documentation.
+     */
+    public SCalcBuilder<RETURN_TYPE> multiplyExpression() {
+        return expression(SCalcExpressions.MULTIPLY_EXPRESSION);
+    }
+    
+    /**
+     * [REQUIRED] Expression to parse. For further details see documentation.
+     */
+    public SCalcBuilder<RETURN_TYPE> divideExpression() {
+        return expression(SCalcExpressions.DIVIDE_EXPRESSION);
+    }
+    
+    /**
+     * [REQUIRED] Expression to parse. For further details see documentation.
+     */
+    public SCalcBuilder<RETURN_TYPE> powExpression() {
+        return expression(SCalcExpressions.POW_EXPRESSION);
+    }
 
     /**
      * [OPTIONAL] Specifies the scale of the result. This scale will only be used for rounding the result number. Internal calculation can use another scale!<br/>

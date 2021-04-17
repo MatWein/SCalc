@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class SCalc<RETURN_TYPE> {
     private final SCalcOptions<RETURN_TYPE> options;
-    private Map<String, Number> params = new LinkedHashMap<>();
+    private final Map<String, Number> params = new LinkedHashMap<>();
 
     SCalc(SCalcOptions<RETURN_TYPE> options) {
         this.options = options;
@@ -60,7 +60,7 @@ public class SCalc<RETURN_TYPE> {
             if (paramsAsArray[0] instanceof CharSequence) {
                 this.params.putAll(ParamExtractor.extractParamsFromNameValuePairs(options.getConverters(), paramsAsArray));
             } else {
-                this.params.putAll(ParamExtractor.extractParamsWithRandomName(options.getConverters(), paramsAsArray));
+                this.params.putAll(ParamExtractor.extractParamsWithRandomName(options.getConverters(), paramsAsArray, this.params.size()));
             }
         }
 

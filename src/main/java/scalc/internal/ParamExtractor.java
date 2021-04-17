@@ -6,15 +6,17 @@ import scalc.internal.converter.ToNumberConverter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class ParamExtractor {
-    public static Map<String, Number> extractParamsWithRandomName(Map<Class<?>, INumberConverter> converters, Object[] paramsAsArray) {
+    private static final String DEFAULT_PARAM_NAME = "param";
+    
+    public static Map<String, Number> extractParamsWithRandomName(Map<Class<?>, INumberConverter> converters, Object[] paramsAsArray, int startNumber) {
         Map<String, Number> result = new LinkedHashMap<>();
-
+        int counter = startNumber;
+        
         for (Object param : paramsAsArray) {
             Number value = ToNumberConverter.toNumber(param, converters);
-            result.put(UUID.randomUUID().toString(), value);
+            result.put(DEFAULT_PARAM_NAME + counter++, value);
         }
 
         return result;

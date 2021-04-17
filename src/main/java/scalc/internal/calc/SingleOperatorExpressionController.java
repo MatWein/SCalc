@@ -1,5 +1,6 @@
 package scalc.internal.calc;
 
+import scalc.SCalcExpressions;
 import scalc.SCalcOptions;
 import scalc.exceptions.CalculationException;
 import scalc.internal.converter.NumberTypeConverter;
@@ -22,11 +23,11 @@ public class SingleOperatorExpressionController {
             BigDecimal value = NumberTypeConverter.convert(paramsInOrder.get(i), BigDecimal.class);
 
             switch (expression) {
-                case "+": result = result.add(value); break;
-                case "-": result = result.subtract(value); break;
-                case "*": result = result.multiply(value); break;
-                case "/": result = result.divide(value, options.getCalculationScale(), options.getCalculationRoundingMode()); break;
-                case "^": result = SCalcExecutor.calulatePow(result, value, options); break;
+                case SCalcExpressions.SUM_EXPRESSION: result = result.add(value); break;
+                case SCalcExpressions.SUBTRACT_EXPRESSION: result = result.subtract(value); break;
+                case SCalcExpressions.MULTIPLY_EXPRESSION: result = result.multiply(value); break;
+                case SCalcExpressions.DIVIDE_EXPRESSION: result = result.divide(value, options.getCalculationScale(), options.getCalculationRoundingMode()); break;
+                case SCalcExpressions.POW_EXPRESSION: result = SCalcExecutor.calulatePow(result, value, options); break;
                 default: throw new CalculationException("Expression invalid.");
             }
         }

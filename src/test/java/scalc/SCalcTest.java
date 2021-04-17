@@ -147,7 +147,7 @@ public class SCalcTest {
     @Test
     public void calc_AddAll() {
         Double result = SCalcBuilder.doubleInstance()
-                .expression("+")
+                .sumExpression()
                 .build()
                 .params(2, 3, 2)
                 .calc();
@@ -368,7 +368,7 @@ public class SCalcTest {
         };
 
         Double result = SCalcBuilder.doubleInstance()
-                .expression("+")
+                .sumExpression()
                 .registerConverter(TestDto.class, numberConverter)
                 .build()
                 .paramsAsCollection(dtos)
@@ -573,5 +573,17 @@ public class SCalcTest {
 				.buildAndCalc();
 		
 		Assert.assertEquals(1.0, result, 0);
+	}
+	
+	@Test
+	public void testParamsAsList() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("param0 + param1 - param2 + param3")
+				.build()
+				.params(10.0, 20.0, 5.0)
+				.params(1)
+				.calc();
+		
+		Assert.assertEquals(26.0, result, 0);
 	}
 }

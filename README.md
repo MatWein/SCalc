@@ -30,7 +30,8 @@ BigDecimal result = SCalcBuilder.bigDecimalInstance()
 Parameters for the calculation can be added by using:  
 - the .parameter(name, number) method  
 - the .params(map) method  
-- the .params(...) method. This method can be used in form of .params("a", 10, "b", 100, "c", 20) or to add unnamed parameters like .params(10, 100, 20)
+- the .params(...) method. This method can be used in form of .params("a", 10, "b", 100, "c", 20) or to add parameters like .params(10, 100, 20) which will result in param0 = 10, param1 = 100, ...
+- the .paramsAsCollection(collection) method. Same logic as .params(...) method, but takes a collection instead of an array.
 
 
 ## Custom type converters
@@ -114,6 +115,15 @@ Double result = SCalcBuilder.doubleInstance()
     .calc();
 ```
 Result will be 2+3+2=7.
+
+It is recommended to use the following expression methods:
+```
+.sumExpression() == .expression(SCalcExpressions.SUM_EXPRESSION) == .expression("+")
+.subtractExpression() == .expression(SCalcExpressions.SUBTRACT_EXPRESSION) == .expression("-")
+.multiplyExpression() == .expression(SCalcExpressions.MULTIPLY_EXPRESSION) == .expression("*")
+.divideExpression() == .expression(SCalcExpressions.DIVIDE_EXPRESSION) == .expression("/")
+.powExpression() == .expression(SCalcExpressions.POW_EXPRESSION) == .expression("^")
+```
 
 ### Standard expressions
 Standard expressions were used in previous examples. It is a single line math expression:
