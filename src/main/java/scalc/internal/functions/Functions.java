@@ -28,6 +28,12 @@ public class Functions {
         functions.put("abs", AbsFunction.INSTANCE);
         
         functions.put("round", RoundFunction.INSTANCE);
+        
+        functions.put("sin", SinFunction.INSTANCE);
+        functions.put("cos", CosFunction.INSTANCE);
+        functions.put("tan", TanFunction.INSTANCE);
+        functions.put("ln", LnFunction.INSTANCE);
+        functions.put("log", LogFunction.INSTANCE);
 
         return functions;
     }

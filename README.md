@@ -99,6 +99,21 @@ example: abs(-16) = 16
 - round(value, scale=2, roundingMode=HALF_UP)  
 description: Sets the rounding scale for a given value.  
 example: round(22.999999), round(0.12121212, 4), round(0.5, 1, HALF_DOWN)
+- sin(value)  
+description: Returns the sinus of the given value.  
+example: sin(6) = -0.27941549819
+- cos(value)  
+description: Returns the cosinus of the given value.  
+example: cos(6) = 0.96017028665
+- tan(value)  
+description: Returns the tangens of the given value.  
+example: tan(6) = -0.29100619138
+- ln(value)  
+description: Returns the natural logarithm (base e) of the given value.  
+example: ln(6) = 1.79175946923
+- log(value)  
+description: Returns the base 10 logarithm of the given value.  
+example: log(6) = 0.77815125038
 
 ### Constants
 - PI  

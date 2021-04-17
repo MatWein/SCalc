@@ -616,4 +616,49 @@ public class SCalcTest {
 		
 		Assert.assertEquals(600.02, result, 0);
 	}
+	
+	@Test
+	public void testSinFunction() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("sin(6)")
+				.buildAndCalc();
+		
+		Assert.assertEquals(-0.27941549819, result, 0.00001);
+	}
+	
+	@Test
+	public void testCosFunction() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("cos(6)")
+				.buildAndCalc();
+		
+		Assert.assertEquals(0.96017028665, result, 0.00001);
+	}
+	
+	@Test
+	public void testTanFunction() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("tan(6)")
+				.buildAndCalc();
+		
+		Assert.assertEquals(-0.29100619138, result, 0.00001);
+	}
+	
+	@Test
+	public void testLnFunction() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("ln(6)")
+				.buildAndCalc();
+		
+		Assert.assertEquals(1.79175946923, result, 0.00001);
+	}
+	
+	@Test
+	public void testLogFunction() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("log(6)")
+				.buildAndCalc();
+		
+		Assert.assertEquals(0.77815125038, result, 0.00001);
+	}
 }
