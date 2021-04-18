@@ -224,6 +224,25 @@ If you simply write 0.7 + 0.1 in Java the result will be 0.7999999999999999. If 
 
 Another reason is, that you can specify the calculation precision. Per default all calculation will be done with a scale of 10 and the result also will be rounded (HALF_UP) to 10 digits.
 
+## Calculation within iteration
+For calculations within iterations, it is recommended to create only one SCalc instance and reuse it. See following example:
+
+```
+SCalc<Long> sCalc = SCalcBuilder.instanceFor(Long.class)
+    .expression("f(a, b)=√(a² - (b² / 2)); return f(a, b);")
+    .resultScale(64)
+    .calculationScale(64)
+    .build();
+                
+for (long i = 0; i < 100000; i++) {
+    Long result = sCalc
+        .parameter("a", i)
+        .parameter("b", i)
+        .calc();
+    System.out.println(String.format("%s >> %s", i, result));
+}
+```
+
 ## Debugging
 SCalc can print calculation steps if needed. Example:
 ```

@@ -96,7 +96,7 @@ public class SCalc<RETURN_TYPE> {
      * @param paramExtractor Function to extract nested properties of the fiven params
      * @param params Params for calculation
      */
-    public <T> SCalc<RETURN_TYPE> paramsAsCollection(Function<T, Object> paramExtractor, Collection<?> params) {
+    public <T> SCalc<RETURN_TYPE> paramsAsCollection(Function<T, Object> paramExtractor, Collection<T> params) {
         return params(paramExtractor, (T[])params.toArray(new Object[] {}));
     }
 
