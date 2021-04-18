@@ -5,6 +5,16 @@ Internal calculation will be performed with BigDecimal's to avoid floating point
 
 
 ## Usage
+### Maven
+SCalc can be used by adding the following dependency to your maven pom.xml:
+```
+<dependency>
+  <groupId>io.github.matwein</groupId>
+  <artifactId>scalc-core</artifactId>
+  <version>1.3.0</version>
+</dependency>
+```
+
 ### General
 Every calculation starts with the SCalcBuilder:
 ```
