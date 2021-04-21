@@ -25,7 +25,6 @@ public class PerformanceTest {
                 .parameter("a", i)
                 .parameter("b", i)
                 .calc();
-            System.out.println(String.format("%s >> %s", i, result));
 
             long pow = i * i;
             Assert.assertEquals((long)(Math.sqrt(pow - (pow / 2.0))), result, 0);
@@ -33,6 +32,6 @@ public class PerformanceTest {
 
         long end = System.currentTimeMillis();
         long timeNeeded = end - start;
-        System.out.println(String.format("Time needed for calculation: %sms", timeNeeded));
+        System.out.printf("Time needed for calculation: %sms%n", timeNeeded);
     }
 }

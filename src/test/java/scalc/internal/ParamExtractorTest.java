@@ -6,6 +6,7 @@ import org.junit.Test;
 import scalc.exceptions.CalculationException;
 import scalc.internal.converter.INumberConverter;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -40,7 +41,16 @@ public class ParamExtractorTest {
 
     @Test(expected = CalculationException.class)
     public void extractParamsFromNameValuePairs_InvalidPairsByTypeString() {
-        ParamExtractor.extractParamsFromNameValuePairs(Function.identity(), converters, new Object[] { "a", "10.1", "b", 2 });
+        ParamExtractor.extractParamsFromNameValuePairs(Function.identity(), converters, new Object[] { "a", "abc", "b", 2 });
+    }
+    
+    @Test
+    public void extractParamsFromNameValuePairs_WithString() {
+        Map<String, Number> result = ParamExtractor.extractParamsFromNameValuePairs(Function.identity(), converters, new Object[]{"a", "10.2", "b", 2});
+    
+        Assert.assertEquals(2, result.size());
+        Assert.assertEquals(new BigDecimal("10.2"), result.get("a"));
+        Assert.assertEquals(2, result.get("b"));
     }
 
     @Test(expected = CalculationException.class)

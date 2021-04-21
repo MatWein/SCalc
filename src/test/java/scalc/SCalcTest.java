@@ -281,12 +281,12 @@ public class SCalcTest {
     @Test
     public void calc_SumAllParams() {
         Double result = SCalcBuilder.doubleInstance()
-                .expression("Sum(ALL_PARAMS)")
+                .expression("Sum(ALL_PARAMS) * 2")
                 .build()
                 .params(10, 5, 2, 7)
                 .calc();
 
-        Assert.assertEquals(24.0, result, 0);
+        Assert.assertEquals(48.0, result, 0);
     }
 
     @Test
@@ -670,11 +670,160 @@ public class SCalcTest {
 		double result = SCalcBuilder.doubleInstance()
 				.expression("summe_alle = sum(ALL_PARAMS); faktor(x) = param0 * param2 * x; return summe_alle / faktor(3);")
 				.debug(true)
-				.debugLogger(message -> System.out.println(message))
+				.debugLogger(System.out::println)
 				.build()
 				.paramsAsCollection(TestDto::getValueToExtract, dtos)
 				.calc();
 		
 		Assert.assertEquals(0.11111111111, result, 0.00001);
+	}
+	
+	@Test
+	public void testConstantNameAsFunctionName() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("E(x)=E * x; return E(2);")
+				.debug(true)
+				.buildAndCalc();
+		
+		Assert.assertEquals(Math.E * 2, result, 0.0001);
+	}
+	
+	@Test
+	public void testConstantNameInFunctionName() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("funcE(x)=E * x; return funcE(2);")
+				.debug(true)
+				.buildAndCalc();
+		
+		Assert.assertEquals(Math.E * 2, result, 0.0001);
+	}
+	
+	@Test
+	public void testConstantNameInParamName() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("paramE * 2")
+				.debug(true)
+				.build()
+				.parameter("paramE", 2)
+				.calc();
+		
+		Assert.assertEquals(4.0, result, 0);
+	}
+	
+	@Test(expected = CalculationException.class)
+	public void testInvalidAssignment() {
+		SCalcBuilder.doubleInstance()
+				.expression("=2")
+				.buildAndCalc();
+	}
+	
+	@Test
+	public void testEmptyExpression() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("")
+				.buildAndCalc();
+		
+		Assert.assertEquals(0.0, result, 0);
+	}
+	
+	@Test(expected = CalculationException.class)
+	public void testUnknownFunction() {
+		SCalcBuilder.doubleInstance()
+				.expression("abc(2)")
+				.buildAndCalc();
+	}
+	
+	@Test
+	public void testOnlyNumberInput() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("5.5")
+				.buildAndCalc();
+		
+		Assert.assertEquals(5.5, result, 0);
+	}
+	
+	@Test
+	public void testSpaces() {
+		Assert.assertEquals(4.0, SCalcBuilder.doubleInstance().expression("   12        -  8   ").buildAndCalc(), 0);
+		Assert.assertEquals(133.0, SCalcBuilder.doubleInstance().expression("142        -9   ").buildAndCalc(), 0);
+	}
+	
+	@Test
+	public void testParenthesis() {
+		Assert.assertEquals(5.0, SCalcBuilder.doubleInstance().expression("(((((5)))))").buildAndCalc(), 0);
+		Assert.assertEquals(30.0, SCalcBuilder.doubleInstance().expression("(( ((2)) + 4))*((5))").buildAndCalc(), 0);
+	}
+	
+	@Test
+	public void testUnbalancedParenthesis() {
+		Assert.assertEquals(6.0, SCalcBuilder.doubleInstance().expression("((2)) * ((3").buildAndCalc(), 0);
+		Assert.assertEquals(6.0, SCalcBuilder.doubleInstance().expression("((2) * ((3").buildAndCalc(), 0);
+		Assert.assertEquals(24.0, SCalcBuilder.doubleInstance().expression("6 * ( 2 + 2").buildAndCalc(), 0);
+	}
+	
+	@Test(expected = CalculationException.class)
+	public void testUnbalancedParenthesisError() {
+		SCalcBuilder.doubleInstance()
+				.expression("6 * ) 2 + 2")
+				.buildAndCalc();
+	}
+	
+	@Test
+	public void testComplexFormula() {
+		int a = 6;
+		double b = 4.32;
+		short c = (short) 24.15;
+		
+		double result = SCalcBuilder.doubleInstance()
+				.expression("(((9-a/2)*2-b)/2-a-1)/(2+c/(2+4))")
+				.calculationScale(16)
+				.resultScale(16)
+				.build()
+				.params("a", a, "b", b, "c", c)
+				.calc();
+		
+		Assert.assertEquals((((9 - a / 2.0) * 2 - b) / 2 - a - 1) / (2 + c / (2.0 + 4.0)), result, 0);
+	}
+	
+	@Test
+	public void testRoundingZero() {
+		double result = SCalcBuilder.doubleInstance()
+				.expression("round(a, 2) + round(b, 3) + round(c, 4)")
+				.build()
+				.parameter("a", "0.002")
+				.parameter("b", "0.0002")
+				.parameter("c", "0.00002")
+				.calc();
+		
+		Assert.assertEquals(0.0, result, 0);
+	}
+	
+	@Test
+	public void testRounding() {
+		BigDecimal result = SCalcBuilder.bigDecimalInstance()
+				.expression("round(a, 2) + round(b, 3) + round(c, 5)")
+				.resultScale(6)
+				.build()
+				.parameter("a", "0.002")
+				.parameter("b", "0.0002")
+				.parameter("c", "0.00002")
+				.calc();
+		
+		Assert.assertEquals("0.000020", result.toPlainString());
+	}
+	
+	@Test
+	public void testRounding_CalculationScaleForSumCalculation() {
+		BigDecimal result = SCalcBuilder.bigDecimalInstance()
+				.expression("round(a, 2) + round(b, 3) + round(c, 5)")
+				.resultScale(6)
+				.calculationScale(3)
+				.build()
+				.parameter("a", "0.002")
+				.parameter("b", "0.0002")
+				.parameter("c", "0.00002")
+				.calc();
+		
+		Assert.assertEquals("0.000000", result.toPlainString());
 	}
 }

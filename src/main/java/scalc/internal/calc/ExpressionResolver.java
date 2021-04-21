@@ -1,13 +1,14 @@
 package scalc.internal.calc;
 
+import scalc.SCalcExpressions;
 import scalc.SCalcOptions;
 import scalc.internal.constants.Constants;
 import scalc.internal.converter.NumberTypeConverter;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class ExpressionResolver {
     public static String resolveExpression(SCalcOptions<?> options, String expression, Map<String, Number> params) {
@@ -21,7 +22,7 @@ public class ExpressionResolver {
     private static String replaceGlobalConstants(SCalcOptions<?> options, String expression) {
         Map<String, Number> constants = Constants.getPredefinedConstants(options);
 
-        for (Map.Entry<String, Number> entry : constants.entrySet()) {
+        for (Entry<String, Number> entry : constants.entrySet()) {
             expression = replaceWord(expression, entry.getKey(), entry.getValue().toString());
         }
 
@@ -32,20 +33,15 @@ public class ExpressionResolver {
     }
 
     private static String replaceAllParamsConstant(String expression, Map<String, Number> params) {
-        List<String> allParamsAsString = new ArrayList<>();
-        for (Number value : params.values()) {
-            allParamsAsString.add(paramToString(value));
-        }
+        String paramString = params.values().stream()
+                .map(ExpressionResolver::paramToString)
+                .collect(Collectors.joining(","));
 
-        String paramString = allParamsAsString.toString();
-        paramString = paramString.substring(1, paramString.length() - 1);
-
-        expression = replaceWord(expression, "ALL_PARAMS", paramString);
-        return expression;
+        return replaceWord(expression, SCalcExpressions.ALL_PARAMS, paramString);
     }
 
     private static String replaceGivenParamsInExpression(String expression, Map<String, Number> params) {
-        for (Map.Entry<String, Number> param : params.entrySet()) {
+        for (Entry<String, Number> param : params.entrySet()) {
             String number = param.getValue() == null ? "0" : paramToString(param.getValue());
             expression = replaceWord(expression, param.getKey(), number);
         }
@@ -57,6 +53,6 @@ public class ExpressionResolver {
     }
 
     private static String replaceWord(String value, String wordToReplace, String newValue) {
-        return value.replaceAll("(?i)\\b" + wordToReplace + "\\b", newValue);
+        return value.replaceAll("(?i)\\b" + wordToReplace + "\\b(?!\\()", newValue);
     }
 }

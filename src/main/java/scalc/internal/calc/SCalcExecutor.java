@@ -20,17 +20,19 @@ public class SCalcExecutor {
     private int pos = -1;
     private char currentChar;
 
-    public SCalcExecutor(String expression, SCalcOptions<?> options) {
+    SCalcExecutor(String expression, SCalcOptions<?> options) {
         this(expression, options, new HashMap<>(0));
     }
 
-    public SCalcExecutor(String expression, SCalcOptions<?> options, Map<String, FunctionImpl> customFunctions) {
+    SCalcExecutor(String expression, SCalcOptions<?> options, Map<String, FunctionImpl> customFunctions) {
         this.options = options;
         this.expression = expression.trim();
         this.customFunctions = customFunctions;
     }
 
     BigDecimal parse() {
+        SCalcLogger.debug(options, "Calculating expression: %s", expression);
+        
         if (expression == null || expression.trim().length() == 0) {
             return new BigDecimal(0).setScale(options.getCalculationScale(), options.getCalculationRoundingMode());
         }
@@ -150,7 +152,7 @@ public class SCalcExecutor {
         return x;
     }
 
-    public static BigDecimal calulatePow(BigDecimal value, BigDecimal power, SCalcOptions<?> options) {
+    static BigDecimal calulatePow(BigDecimal value, BigDecimal power, SCalcOptions<?> options) {
         return BigDecimal.valueOf(Math.pow(value.doubleValue(), power.doubleValue())).setScale(options.getCalculationScale(), options.getCalculationRoundingMode());
     }
 

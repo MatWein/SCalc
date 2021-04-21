@@ -16,7 +16,9 @@ public class SCalcOptions<RETURN_TYPE> {
     private RoundingMode calculationRoundingMode = RoundingMode.HALF_UP;
     private boolean debug = false;
     private Consumer<String> debugLogger = System.out::println;
-
+    
+    SCalcOptions() { }
+    
     public Class<RETURN_TYPE> getReturnType() {
         return returnType;
     }

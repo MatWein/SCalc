@@ -39,7 +39,7 @@ public class SCalcController {
 
         if (SINGLE_OPERATOR_EXPRESSIONS.contains(expression)) {
             return parseSingleOperatorExpression(expression, options, params);
-        } else if (expression.contains(";")) {
+        } else if (expression.contains(DefinitionExpressionController.EXPRESSION_SEPARATOR)) {
             return parseDefinitionExpression(sCalc);
         } else {
             return parseStandardExpression(options, params, expression);

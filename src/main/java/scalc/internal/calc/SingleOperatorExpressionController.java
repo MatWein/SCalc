@@ -12,7 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 public class SingleOperatorExpressionController {
-    public static BigDecimal parseSingleOperatorExpression(String expression, SCalcOptions<?> options, Map<String, Number> params) {
+    public static BigDecimal parseSingleOperatorExpression(
+            String expression,
+            SCalcOptions<?> options,
+            Map<String, Number> params) {
+        
         if (params == null || params.isEmpty()) {
             return new BigDecimal(0).setScale(options.getCalculationScale(), options.getCalculationRoundingMode());
         }

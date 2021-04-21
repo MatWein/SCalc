@@ -16,14 +16,20 @@ import java.util.regex.Pattern;
 import static scalc.internal.calc.ExpressionResolver.resolveExpression;
 
 public class DefinitionExpressionController {
-    public static BigDecimal parseDefinitionExpression(SCalc<?> sCalc) {
+    static final String EXPRESSION_SEPARATOR = ";";
+    static final String ASSIGNMENT_SEPARATOR = "=";
+    static final String RETURN_KEYWORD = "return";
+    
+    private static final Pattern FUNCTION_NAME_AND_PARAMS_PATTERN = Pattern.compile("(.*?)\\((.*?)\\)");
+    
+    static BigDecimal parseDefinitionExpression(SCalc<?> sCalc) {
         SCalcOptions<?> options = sCalc.getOptions();
         Map<String, Number> customParams = new LinkedHashMap<>(sCalc.getParams());
         Map<String, FunctionImpl> customFunctions = new HashMap<>();
 
-        String[] definitions = options.getExpression().split(";");
+        String[] definitions = options.getExpression().split(EXPRESSION_SEPARATOR);
         for (String definition : definitions) {
-            if (definition.trim().startsWith("return")) {
+            if (definition.trim().startsWith(RETURN_KEYWORD)) {
                 return calculateReturnStatement(options, customParams, customFunctions, definition);
             } else {
                 assignVariableOrFunction(options, customParams, customFunctions, definition);
@@ -39,7 +45,7 @@ public class DefinitionExpressionController {
             Map<String, FunctionImpl> customFunctions,
             String definition) {
 
-        String expression = definition.trim().substring("return".length()).trim();
+        String expression = definition.trim().substring(RETURN_KEYWORD.length()).trim();
         String resolvedExpression = resolveExpression(options, expression, customParams);
         SCalcExecutor executor = new SCalcExecutor(resolvedExpression, options, customFunctions);
         BigDecimal result = executor.parse();
@@ -57,7 +63,7 @@ public class DefinitionExpressionController {
             Map<String, FunctionImpl> customFunctions,
             String definition) {
 
-        String[] assignment = definition.split("=");
+        String[] assignment = definition.split(ASSIGNMENT_SEPARATOR);
         if (assignment.length != 2) {
             throw new CalculationException("Definitions cannot have more than 2 parts.");
         } else {
@@ -81,7 +87,7 @@ public class DefinitionExpressionController {
             final String functionName,
             final String expression) {
 
-        Matcher matcher = Pattern.compile("(.*?)\\((.*?)\\)").matcher(functionName);
+        Matcher matcher = FUNCTION_NAME_AND_PARAMS_PATTERN.matcher(functionName);
         if (!matcher.find()) {
             throw new CalculationException("Function definition invalid: " + functionName);
         }

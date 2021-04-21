@@ -13,10 +13,10 @@ import java.util.function.Consumer;
  * Builder class for the SCalc calculator.
  */
 public class SCalcBuilder<RETURN_TYPE> {
-    private static Map<Class<?>, INumberConverter> staticConverters = new HashMap<>();
+    private static final Map<Class<?>, INumberConverter> staticConverters = new HashMap<>();
 
-    private SCalcOptions<RETURN_TYPE> options = new SCalcOptions<>();
-    private Map<Class<?>, INumberConverter> customConverters = new HashMap<>();
+    private final SCalcOptions<RETURN_TYPE> options = new SCalcOptions<>();
+    private final Map<Class<?>, INumberConverter> customConverters = new HashMap<>();
 
     /**
      * Use this method to get a new builder. All calculation results will be returned as double.

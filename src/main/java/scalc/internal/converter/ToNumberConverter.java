@@ -15,13 +15,25 @@ public class ToNumberConverter {
         if (object instanceof Number) {
             return (Number)object;
         }
+        if (object instanceof CharSequence) {
+            String value = object.toString();
+            try {
+                return new BigDecimal(value);
+            } catch (Throwable e) {
+                throw new CalculationException(String.format("Cannot parse bigdecimal from string '%s'.", value), e);
+            }
+        }
 
         INumberConverter numberConverter = converters.get(object.getClass());
         if (numberConverter == null) {
             throw new CalculationException(String.format("Cannot find converter for '%s'.", object));
         }
 
-        return numberConverter.toBigDecimal(object);
+        try {
+            return numberConverter.toBigDecimal(object);
+        } catch (Throwable e) {
+            throw new CalculationException(String.format("Cannot parse number from '%s' using %s.", object, numberConverter), e);
+        }
     }
 
     public static <RETURN_TYPE> RETURN_TYPE toResultType(
