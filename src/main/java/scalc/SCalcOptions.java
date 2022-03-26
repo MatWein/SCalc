@@ -7,12 +7,14 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class SCalcOptions<RETURN_TYPE> {
-    private Class<RETURN_TYPE> returnType;
+	public static final int DEFAULT_SCALE = 10;
+	
+	private Class<RETURN_TYPE> returnType;
     private String expression;
     private Map<Class<?>, INumberConverter> converters;
-    private int resultScale = 10;
+    private int resultScale = DEFAULT_SCALE;
     private RoundingMode resultRoundingMode = RoundingMode.HALF_UP;
-    private int calculationScale = 10;
+    private int calculationScale = DEFAULT_SCALE;
     private RoundingMode calculationRoundingMode = RoundingMode.HALF_UP;
     private boolean debug = false;
     private Consumer<String> debugLogger = System.out::println;

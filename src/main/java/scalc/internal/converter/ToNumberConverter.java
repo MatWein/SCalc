@@ -45,7 +45,13 @@ public class ToNumberConverter {
             return (RETURN_TYPE)value;
         }
 
-        if (Number.class.isAssignableFrom(returnType)) {
+        if (Number.class.isAssignableFrom(returnType)
+		        || double.class.equals(returnType)
+		        || int.class.equals(returnType)
+		        || short.class.equals(returnType)
+		        || long.class.equals(returnType)
+		        || float.class.equals(returnType)) {
+        	
             return (RETURN_TYPE)NumberTypeConverter.convert(value, (Class)returnType);
         }
 

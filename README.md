@@ -137,6 +137,24 @@ value: 2.7182818284590452354
 description: Euler number
 
 
+## Utility classes
+There are some shortcut methods you can use to reduce boilerplate code:
+
+### Round value
+```
+double result = SCalcUtil.round(10.55, 1, RoundingMode.HALF_UP, double.class)
+double result = SCalcUtil.round(10.5567, 2);
+Money result = SCalcUtil.round(new Money(0.000012), 5);
+BigDecimal result = SCalcUtil.round(-999.99, 2, BigDecimal.class);
+```
+
+### Calculate sum
+```
+double result = SCalcUtil.summarize(double.class, -10.0, 15.0, 60.1);
+double result = SCalcUtil.summarize(double.class, 1.0, BigDecimal.valueOf(2.0), 7L);
+Double result = SCalcUtil.summarizeCollection(Double.class, numbers, Money::getValue);
+```
+
 ## Expressions
 There are three basic types of expressions you can use with SCalc:
 
@@ -222,7 +240,7 @@ public void calc_FloatingPoint1() {
 ```
 If you simply write 0.7 + 0.1 in Java the result will be 0.7999999999999999. If you now multiply this with a larger number, your result will be wrong. SCalc avoids this problem by using BigDecimals for internal calculation.
 
-Another reason is, that you can specify the calculation precision. Per default all calculation will be done with a scale of 10 and the result also will be rounded (HALF_UP) to 10 digits.
+Another reason is, that you can specify the calculation precision. **Per default all calculation will be done with a scale of 10 and the result also will be rounded (HALF_UP) to 10 digits.** (See scalc.SCalcOptions.DEFAULT_SCALE)
 
 ## Calculation within iteration
 For calculations within iterations, it is recommended to create only one SCalc instance and reuse it. See following example:

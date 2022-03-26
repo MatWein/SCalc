@@ -58,7 +58,7 @@ public class SCalcBuilder<RETURN_TYPE> {
     public static void registerGlobalConverter(Class<?> type, INumberConverter converter) {
         staticConverters.put(type, converter);
     }
-
+    
     /**
      * Register a global type converter for calculation results and parameters.<br/>
      * Your converter class has to have a default constructor to use this method!<br/>
@@ -73,6 +73,15 @@ public class SCalcBuilder<RETURN_TYPE> {
             throw new CalculationException(String.format("Number converter has no default constructur: %s", converter.getName()));
         }
     }
+	
+	/**
+	 * Remove a global type converter from scalc.<br/>
+	 * Attention: This will affect ALL instances of SCalc!
+	 * @param type Number type of the given converter
+	 */
+	public static void removeGlobalConverter(Class<?> type) {
+		staticConverters.remove(type);
+	}
 
     private SCalcBuilder(Class<RETURN_TYPE> returnType) {
         this.options.setReturnType(returnType);

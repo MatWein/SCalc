@@ -84,6 +84,10 @@ public class SCalc<RETURN_TYPE> {
      * @param params Params for calculation
      */
     public SCalc<RETURN_TYPE> paramsAsCollection(Collection<?> params) {
+    	if (params == null || params.isEmpty()) {
+    		return this;
+	    }
+    	
         return params(params.toArray(new Object[] {}));
     }
     
