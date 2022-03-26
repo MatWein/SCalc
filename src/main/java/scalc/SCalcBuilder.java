@@ -34,7 +34,7 @@ public class SCalcBuilder<RETURN_TYPE> {
 
     /**
      * Use this method to get a new builder. All calculation results will be returned in the given type, if the type is known or you have specified a custom converter for this type.
-     * @param returnType Class<? extends Number> or custom type.
+     * @param returnType Class extends Number or custom type.
      */
     public static <RETURN_TYPE> SCalcBuilder<RETURN_TYPE> instanceFor(Class<RETURN_TYPE> returnType) {
         return new SCalcBuilder<>(returnType);
