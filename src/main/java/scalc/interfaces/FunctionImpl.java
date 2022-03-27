@@ -1,4 +1,4 @@
-package scalc.internal.functions;
+package scalc.interfaces;
 
 import scalc.SCalcOptions;
 

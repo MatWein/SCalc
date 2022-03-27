@@ -1,6 +1,7 @@
 package scalc.internal.functions;
 
 import scalc.SCalcOptions;
+import scalc.interfaces.FunctionImpl;
 import scalc.internal.converter.NumberTypeConverter;
 
 import java.math.BigDecimal;

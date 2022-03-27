@@ -2,8 +2,8 @@ package scalc.internal.calc;
 
 import scalc.SCalcOptions;
 import scalc.exceptions.CalculationException;
+import scalc.interfaces.FunctionImpl;
 import scalc.internal.SCalcLogger;
-import scalc.internal.functions.FunctionImpl;
 import scalc.internal.functions.Functions;
 
 import java.math.BigDecimal;
@@ -127,6 +127,9 @@ public class SCalcExecutor {
             if (funcImpl == null) {
                 funcImpl = customFunctions.get(func);
             }
+	        if (funcImpl == null) {
+		        funcImpl = options.getUserFunctions().get(func);
+	        }
             if (funcImpl == null) {
                 throw new CalculationException("Unknown function: " + func);
             }

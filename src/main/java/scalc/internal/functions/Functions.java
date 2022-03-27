@@ -1,5 +1,8 @@
 package scalc.internal.functions;
 
+import scalc.exceptions.CalculationException;
+import scalc.interfaces.FunctionImpl;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +40,16 @@ public class Functions {
 
         return functions;
     }
-
+	
+	public static void validateIsValidFunctionName(String functionName) {
+		for (char c : functionName.toCharArray()) {
+			if (!calculateIsValidFunctionChar(c)) {
+				String message = String.format("Character '%s' is not valid to use in a function name.", c);
+				throw new CalculationException(message);
+			}
+		}
+	}
+    
     public static boolean calculateIsValidFunctionChar(char c) {
         return (c >= 'A' && c <= 'Z')
                 || (c >= 'a' && c <= 'z')

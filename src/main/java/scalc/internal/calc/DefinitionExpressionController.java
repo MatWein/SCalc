@@ -3,8 +3,8 @@ package scalc.internal.calc;
 import scalc.SCalc;
 import scalc.SCalcOptions;
 import scalc.exceptions.CalculationException;
+import scalc.interfaces.FunctionImpl;
 import scalc.internal.SCalcLogger;
-import scalc.internal.functions.FunctionImpl;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

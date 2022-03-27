@@ -1,17 +1,19 @@
 package scalc;
 
+import scalc.interfaces.FunctionImpl;
 import scalc.interfaces.INumberConverter;
 
 import java.math.RoundingMode;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class SCalcOptions<RETURN_TYPE> {
+public final class SCalcOptions<RETURN_TYPE> {
 	public static final int DEFAULT_SCALE = 10;
 	
 	private Class<RETURN_TYPE> returnType;
     private String expression;
     private Map<Class<?>, INumberConverter> converters;
+    private Map<String, FunctionImpl> userFunctions;
     private int resultScale = DEFAULT_SCALE;
     private RoundingMode resultRoundingMode = RoundingMode.HALF_UP;
     private int calculationScale = DEFAULT_SCALE;
@@ -65,7 +67,7 @@ public class SCalcOptions<RETURN_TYPE> {
         return expression;
     }
 
-    public void setExpression(String expression) {
+    void setExpression(String expression) {
         this.expression = expression;
     }
 
@@ -73,7 +75,7 @@ public class SCalcOptions<RETURN_TYPE> {
         return converters;
     }
 
-    public void setConverters(Map<Class<?>, INumberConverter> converters) {
+    void setConverters(Map<Class<?>, INumberConverter> converters) {
         this.converters = converters;
     }
     
@@ -81,7 +83,7 @@ public class SCalcOptions<RETURN_TYPE> {
         return debug;
     }
     
-    public void setDebug(boolean debug) {
+    void setDebug(boolean debug) {
         this.debug = debug;
     }
     
@@ -89,7 +91,15 @@ public class SCalcOptions<RETURN_TYPE> {
         return debugLogger;
     }
     
-    public void setDebugLogger(Consumer<String> debugLogger) {
+    void setDebugLogger(Consumer<String> debugLogger) {
         this.debugLogger = debugLogger;
     }
+	
+	public Map<String, FunctionImpl> getUserFunctions() {
+		return userFunctions;
+	}
+	
+	void setUserFunctions(Map<String, FunctionImpl> userFunctions) {
+		this.userFunctions = userFunctions;
+	}
 }

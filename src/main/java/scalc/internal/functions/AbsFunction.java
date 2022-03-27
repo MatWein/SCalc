@@ -2,6 +2,7 @@ package scalc.internal.functions;
 
 import scalc.SCalcOptions;
 import scalc.exceptions.CalculationException;
+import scalc.interfaces.FunctionImpl;
 
 import java.math.BigDecimal;
 import java.util.List;

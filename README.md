@@ -87,6 +87,36 @@ Money result = SCalcBuilder.instanceFor(Money.class)
 ```
 
 
+## Custom user functions
+In some cases it may be helpful to define custom calculation functions to use in expressions.  
+This can be done like in the following examples.
+
+### Global
+```
+SCalcBuilder.registerGlobalUserFunction("percent", (options, functionParams) -> functionParams.get(0)
+    .multiply(new BigDecimal(100))
+    .divide(functionParams.get(1), options.getCalculationScale(), options.getCalculationRoundingMode())
+    .setScale(options.getCalculationScale(), options.getCalculationRoundingMode()));
+
+int result = SCalcBuilder.integerInstance()
+    .expression("percent(12, 200) + percent(6, 100)")
+    .buildAndCalc();
+```
+
+### Local
+```
+FunctionImpl function = (options, functionParams) -> functionParams.get(0).multiply(new BigDecimal(-1).setScale(
+    options.getCalculationScale(),
+    options.getCalculationRoundingMode())
+);
+		
+int result = SCalcBuilder.integerInstance()
+    .expression("negate(2) + 1")
+    .registerUserFunction("negate", function)
+    .buildAndCalc();
+```
+
+
 ## Predefined content
 The SCalc library has some predefined functions and constants that can be used in every expression. Keep in mind that this functions and constants can have multiple aliases. For a full listing see:  
 - scalc.internal.functions.Functions  
