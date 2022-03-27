@@ -1,6 +1,7 @@
 package scalc.internal.converter;
 
 import scalc.exceptions.CalculationException;
+import scalc.interfaces.INumberConverter;
 
 import java.math.BigDecimal;
 import java.util.Map;

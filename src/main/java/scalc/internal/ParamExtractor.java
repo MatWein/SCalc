@@ -1,7 +1,7 @@
 package scalc.internal;
 
 import scalc.exceptions.CalculationException;
-import scalc.internal.converter.INumberConverter;
+import scalc.interfaces.INumberConverter;
 import scalc.internal.converter.ToNumberConverter;
 
 import java.util.HashMap;

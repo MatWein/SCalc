@@ -1,8 +1,8 @@
 package scalc.internal.calc;
 
-import scalc.SCalcExpressions;
 import scalc.SCalcOptions;
 import scalc.exceptions.CalculationException;
+import scalc.interfaces.SCalcExpressions;
 import scalc.internal.SCalcLogger;
 import scalc.internal.converter.NumberTypeConverter;
 

@@ -1,7 +1,8 @@
 package scalc;
 
 import scalc.exceptions.CalculationException;
-import scalc.internal.converter.INumberConverter;
+import scalc.interfaces.INumberConverter;
+import scalc.interfaces.SCalcExpressions;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

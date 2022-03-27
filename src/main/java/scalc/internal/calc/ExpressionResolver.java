@@ -1,7 +1,7 @@
 package scalc.internal.calc;
 
-import scalc.SCalcExpressions;
 import scalc.SCalcOptions;
+import scalc.interfaces.SCalcExpressions;
 import scalc.internal.constants.Constants;
 import scalc.internal.converter.NumberTypeConverter;
 

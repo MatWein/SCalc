@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import scalc.exceptions.CalculationException;
-import scalc.internal.converter.INumberConverter;
+import scalc.interfaces.INumberConverter;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

@@ -3,7 +3,7 @@ package scalc;
 import org.junit.Assert;
 import org.junit.Test;
 import scalc.exceptions.CalculationException;
-import scalc.internal.converter.INumberConverter;
+import scalc.interfaces.INumberConverter;
 import scalc.test.model.Money;
 import scalc.test.model.MoneyConverter;
 import scalc.test.model.TestDto;

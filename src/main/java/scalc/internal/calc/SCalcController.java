@@ -1,8 +1,8 @@
 package scalc.internal.calc;
 
 import scalc.SCalc;
-import scalc.SCalcExpressions;
 import scalc.SCalcOptions;
+import scalc.interfaces.SCalcExpressions;
 import scalc.internal.converter.ToNumberConverter;
 
 import java.math.BigDecimal;

@@ -1,4 +1,4 @@
-package scalc.internal.converter;
+package scalc.interfaces;
 
 import java.math.BigDecimal;
 

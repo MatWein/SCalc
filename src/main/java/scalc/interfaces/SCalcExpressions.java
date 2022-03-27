@@ -1,4 +1,4 @@
-package scalc;
+package scalc.interfaces;
 
 public interface SCalcExpressions {
 	String ALL_PARAMS = "ALL_PARAMS";

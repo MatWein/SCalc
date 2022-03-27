@@ -1,6 +1,6 @@
 package scalc;
 
-import scalc.internal.converter.INumberConverter;
+import scalc.interfaces.INumberConverter;
 
 import java.math.RoundingMode;
 import java.util.Map;

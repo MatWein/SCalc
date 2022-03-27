@@ -1,6 +1,6 @@
 package scalc.test.model;
 
-import scalc.internal.converter.INumberConverter;
+import scalc.interfaces.INumberConverter;
 
 import java.math.BigDecimal;
 
