@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 /**
  * Builder class for the SCalc calculator.
  */
-public class SCalcBuilder<RETURN_TYPE> {
+public final class SCalcBuilder<RETURN_TYPE> {
     private static final Map<Class<?>, INumberConverter> staticConverters = new HashMap<>();
 
     private final SCalcOptions<RETURN_TYPE> options = new SCalcOptions<>();
@@ -24,6 +24,34 @@ public class SCalcBuilder<RETURN_TYPE> {
     public static SCalcBuilder<Double> doubleInstance() {
         return instanceFor(Double.class);
     }
+	
+	/**
+	 * Use this method to get a new builder. All calculation results will be returned as float.
+	 */
+	public static SCalcBuilder<Float> floatInstance() {
+		return instanceFor(Float.class);
+	}
+	
+	/**
+	 * Use this method to get a new builder. All calculation results will be returned as integer.
+	 */
+	public static SCalcBuilder<Integer> integerInstance() {
+		return instanceFor(Integer.class);
+	}
+	
+	/**
+	 * Use this method to get a new builder. All calculation results will be returned as short.
+	 */
+	public static SCalcBuilder<Short> shortInstance() {
+		return instanceFor(Short.class);
+	}
+	
+	/**
+	 * Use this method to get a new builder. All calculation results will be returned as long.
+	 */
+	public static SCalcBuilder<Long> longInstance() {
+		return instanceFor(Long.class);
+	}
 
     /**
      * Use this method to get a new builder. All calculation results will be returned as BigDecimal.

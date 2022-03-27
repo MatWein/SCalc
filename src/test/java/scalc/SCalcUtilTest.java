@@ -44,7 +44,7 @@ public class SCalcUtilTest {
 	
 	@Test
 	public void testRound_SameReturnTypeAsInput_Money() {
-		SCalcBuilder.registerGlobalConverter(Money.class, new MoneyConverter());
+		SCalcBuilder.registerGlobalConverter(Money.class, MoneyConverter.class);
 		try {
 			Money result = SCalcUtil.round(new Money(0.000012), 5);
 			Assert.assertEquals(0.00001, result.getValue(), 0.0);

@@ -5,7 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class PerformanceTest {
-    private SCalc<Long> sCalc;
+	private static final int ITERATIONS = 100000;
+	
+	private SCalc<Long> sCalc;
 
     @Before
     public void setUp() {
@@ -19,19 +21,21 @@ public class PerformanceTest {
     @Test
     public void testPerformance() {
         long start = System.currentTimeMillis();
+        long result = 0L;
 
-        for (long i = 0; i < 100000; i++) {
-            Long result = sCalc
+        for (long i = 0; i < ITERATIONS; i++) {
+            result = sCalc
                 .parameter("a", i)
                 .parameter("b", i)
                 .calc();
-
-            long pow = i * i;
-            Assert.assertEquals((long)(Math.sqrt(pow - (pow / 2.0))), result, 0);
         }
 
         long end = System.currentTimeMillis();
         long timeNeeded = end - start;
         System.out.printf("Time needed for calculation: %sms%n", timeNeeded);
+	
+	    long i = ITERATIONS - 1;
+	    long pow = i * i;
+	    Assert.assertEquals((long)(Math.sqrt(pow - (pow / 2.0))), result, 0);
     }
 }

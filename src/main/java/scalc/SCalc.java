@@ -13,7 +13,7 @@ import java.util.function.Function;
 /**
  * The calculator class. Do not create the instance by yourself. Please use SCalcBuilder!
  */
-public class SCalc<RETURN_TYPE> {
+public final class SCalc<RETURN_TYPE> {
     private final SCalcOptions<RETURN_TYPE> options;
     private final Map<String, Number> params = new LinkedHashMap<>();
 
@@ -26,7 +26,7 @@ public class SCalc<RETURN_TYPE> {
      * @return Calculation result as double, BigDecimal or whatever you have specified in the builder.
      * @throws CalculationException If any problems occur, the exception will be wrapped ad CalculationException.
      */
-    public RETURN_TYPE calc() throws CalculationException {
+    public final RETURN_TYPE calc() throws CalculationException {
         try {
             RETURN_TYPE result = SCalcController.calc(this);
             this.reset();
@@ -41,7 +41,7 @@ public class SCalc<RETURN_TYPE> {
      * [OPTIONAL] Map of named parameters to use for calculation. Optional if the expression does not have any params.
      * @param params Params for calculation
      */
-    public SCalc<RETURN_TYPE> params(Map<String, Object> params) {
+    public final SCalc<RETURN_TYPE> params(Map<String, Object> params) {
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             this.params.put(entry.getKey(), ToNumberConverter.toNumber(entry.getValue(), options.getConverters()));
         }
@@ -56,7 +56,7 @@ public class SCalc<RETURN_TYPE> {
      * Optional if the expression does not have any params.
      * @param paramsAsArray Params for calculation
      */
-    public SCalc<RETURN_TYPE> params(Object... paramsAsArray) {
+    public final SCalc<RETURN_TYPE> params(Object... paramsAsArray) {
         this.params.putAll(ParamExtractor.extractParams(Function.identity(), options.getConverters(), paramsAsArray, this.params.size()));
         return this;
     }
@@ -70,7 +70,8 @@ public class SCalc<RETURN_TYPE> {
      * @param paramExtractor Function to extract nested properties of the fiven params
      * @param paramsAsArray Params for calculation
      */
-    public <T> SCalc<RETURN_TYPE> params(Function<T, Object> paramExtractor, T... paramsAsArray) {
+    @SafeVarargs
+    public final <T> SCalc<RETURN_TYPE> params(Function<T, Object> paramExtractor, T... paramsAsArray) {
         this.params.putAll(ParamExtractor.extractParams(paramExtractor, options.getConverters(), paramsAsArray, this.params.size()));
         return this;
     }
@@ -83,7 +84,7 @@ public class SCalc<RETURN_TYPE> {
      * Optional if the expression does not have any params.
      * @param params Params for calculation
      */
-    public SCalc<RETURN_TYPE> paramsAsCollection(Collection<?> params) {
+    public final SCalc<RETURN_TYPE> paramsAsCollection(Collection<?> params) {
     	if (params == null || params.isEmpty()) {
     		return this;
 	    }
@@ -100,7 +101,7 @@ public class SCalc<RETURN_TYPE> {
      * @param paramExtractor Function to extract nested properties of the fiven params
      * @param params Params for calculation
      */
-    public <T> SCalc<RETURN_TYPE> paramsAsCollection(Function<T, Object> paramExtractor, Collection<T> params) {
+    public final <T> SCalc<RETURN_TYPE> paramsAsCollection(Function<T, Object> paramExtractor, Collection<T> params) {
         return params(paramExtractor, (T[])params.toArray(new Object[] {}));
     }
 
@@ -110,7 +111,7 @@ public class SCalc<RETURN_TYPE> {
      * @param name Name of the param
      * @param value Value of the param as java.lang.Number or custom type.
      */
-    public SCalc<RETURN_TYPE> parameter(String name, Object value) {
+    public final SCalc<RETURN_TYPE> parameter(String name, Object value) {
         this.params.put(name, ToNumberConverter.toNumber(value, options.getConverters()));
         return this;
     }
@@ -119,7 +120,7 @@ public class SCalc<RETURN_TYPE> {
      * Resets the calculator state and removes all its parameters.<br/>
      * This method is called automatically after each successful calculation.
      */
-    public SCalc<RETURN_TYPE> reset() {
+    public final SCalc<RETURN_TYPE> reset() {
         this.params.clear();
         return this;
     }

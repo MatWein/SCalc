@@ -18,7 +18,7 @@ SCalc can be used by adding the following dependency to your maven pom.xml:
 ### General
 Every calculation starts with the SCalcBuilder:
 ```
-Double result = SCalcBuilder.doubleInstance()
+double result = SCalcBuilder.doubleInstance()
     .expression("a + b - c")
     .build()
     .parameter("a", 10)
@@ -34,6 +34,14 @@ BigDecimal result = SCalcBuilder.bigDecimalInstance()
     .build()
     .parameter("var1", new BigDecimal(2))
     .calc();
+    
+float result = SCalcBuilder.floatInstance()
+    .expression("10.2 - 0.3")
+    .buildAndCalc();
+    
+int result = SCalcBuilder.integerInstance()
+    .expression("10.2 - 0.3")
+    .buildAndCalc();
 ```
 
 ### Parameter
@@ -47,7 +55,7 @@ Hint: It is also possible to give an extract function to the params... methods t
 ```
 List<TestDto> dtos = new ArrayList<>(); ...
 
-Double result = SCalcBuilder.doubleInstance()
+double result = SCalcBuilder.doubleInstance()
     .sumExpression()
     .build()
     .paramsAsCollection(TestDto::getValueToExtract, dtos)
@@ -161,7 +169,7 @@ There are three basic types of expressions you can use with SCalc:
 ### Single operator expressions
 This is the smallest form of expression. You can only enter one single operator, like "+", "-", "*", "/", "^". This will set the operator between every operand/parameter and calculates the result:
 ```
-Double result = SCalcBuilder.doubleInstance()
+double result = SCalcBuilder.doubleInstance()
     .expression("+")
     .build()
     .params(2, 3, 2)
@@ -204,7 +212,7 @@ BigDecimal result = SCalcBuilder.bigDecimalInstance()
 ### Definition expressions
 This is the most complex and powerful kind of expression. You can enter multiple lines separated with a semicolon. Each line contains a function or varible definition/assignment. At the end you have to write a return statement to calculate the result:
 ```
-Double result = SCalcBuilder.doubleInstance()
+double result = SCalcBuilder.doubleInstance()
     .expression(
         "f(x, y)=10 + (x * y) - 1;" +
         "g(x)=wurzel(x);" +
@@ -246,14 +254,14 @@ Another reason is, that you can specify the calculation precision. **Per default
 For calculations within iterations, it is recommended to create only one SCalc instance and reuse it. See following example:
 
 ```
-SCalc<Long> sCalc = SCalcBuilder.instanceFor(Long.class)
+SCalc<Long> sCalc = SCalcBuilder.longInstance()
     .expression("f(a, b)=√(a² - (b² / 2)); return f(a, b);")
     .resultScale(64)
     .calculationScale(64)
     .build();
                 
 for (long i = 0; i < 100000; i++) {
-    Long result = sCalc
+    long result = sCalc
         .parameter("a", i)
         .parameter("b", i)
         .calc();
