@@ -11,7 +11,7 @@ SCalc can be used by adding the following dependency to your maven pom.xml:
 <dependency>
   <groupId>io.github.matwein</groupId>
   <artifactId>scalc-core</artifactId>
-  <version>2.0.0</version>
+  <version>2.0.1</version>
 </dependency>
 ```
 
