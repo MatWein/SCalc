@@ -3,6 +3,8 @@ package scalc.internal.converter;
 import scalc.exceptions.CalculationException;
 
 import java.math.BigDecimal;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @SuppressWarnings("unchecked")
 public class NumberTypeConverter {
@@ -28,6 +30,10 @@ public class NumberTypeConverter {
             return (RETURN_TYPE)((Short)valueToConvert.shortValue());
         } else if (BigDecimal.class.equals(returnType)) {
             return (RETURN_TYPE)new BigDecimal(valueToConvert.toString());
+        } else if (AtomicInteger.class.equals(returnType)) {
+	        return (RETURN_TYPE)new AtomicInteger(valueToConvert.intValue());
+        } else if (AtomicLong.class.equals(returnType)) {
+	        return (RETURN_TYPE)new AtomicLong(valueToConvert.longValue());
         }
 
         throw new CalculationException(String.format("Value of type '%s': %s cannot be converted to type '%s'.",

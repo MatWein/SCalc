@@ -5,7 +5,6 @@ import org.junit.Test;
 import scalc.exceptions.CalculationException;
 
 import java.math.BigDecimal;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class NumberTypeConverterTest {
     @Test
@@ -47,6 +46,6 @@ public class NumberTypeConverterTest {
 
     @Test(expected = CalculationException.class)
     public void convert_UnsupportedType() {
-        NumberTypeConverter.convert(120.1, AtomicInteger.class);
+        NumberTypeConverter.convert(120.1, Byte.class);
     }
 }

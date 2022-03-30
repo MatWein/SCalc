@@ -11,6 +11,8 @@ import scalc.test.model.TestDto;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class SCalcTest {
     @Test
@@ -825,5 +827,29 @@ public class SCalcTest {
 				.calc();
 		
 		Assert.assertEquals("0.000000", result.toPlainString());
+	}
+	
+	@Test
+	public void testRounding_AtomicInteger() {
+		AtomicInteger result = SCalcBuilder.instanceFor(AtomicInteger.class)
+				.sumExpression()
+				.build()
+				.params(new AtomicInteger(5))
+				.params(new AtomicInteger(6))
+				.calc();
+		
+		Assert.assertEquals(11, result.get());
+	}
+	
+	@Test
+	public void testRounding_AtomicLong() {
+		AtomicLong result = SCalcBuilder.instanceFor(AtomicLong.class)
+				.sumExpression()
+				.build()
+				.params(new AtomicLong(-5))
+				.params(new AtomicLong(6))
+				.calc();
+		
+		Assert.assertEquals(1L, result.get());
 	}
 }
