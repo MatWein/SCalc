@@ -11,7 +11,7 @@ SCalc can be used by adding the following dependency to your maven pom.xml:
 <dependency>
   <groupId>io.github.matwein</groupId>
   <artifactId>scalc-core</artifactId>
-  <version>2.0.1</version>
+  <version>2.0.2</version>
 </dependency>
 ```
 
@@ -83,6 +83,19 @@ Money result = SCalcBuilder.instanceFor(Money.class)
     .registerConverter(Money.class, MoneyConverter.class)
     .build()
     .params(params)
+    .calc();
+```
+
+### Implicit
+If you don't want to register type converters there is the possibility to extend your custom number types with the interface **INumber**. Attention: custom types extending the INumber interface cannot be used as return type because SCalc has no idea on how to create a new instance of this type.
+```
+public class Percentage implements INumber { ... }
+
+double result = SCalcBuilder.doubleInstance()
+    .subtractExpression()
+    .build()
+    .params(new Percentage(0.0001))
+    .params(new Percentage(0.0006))
     .calc();
 ```
 

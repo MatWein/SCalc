@@ -1,12 +1,12 @@
 package scalc.internal.converter;
 
 import scalc.exceptions.CalculationException;
+import scalc.interfaces.INumber;
 import scalc.interfaces.INumberConverter;
 
 import java.math.BigDecimal;
 import java.util.Map;
 
-@SuppressWarnings("unchecked")
 public class ToNumberConverter {
     public static Number toNumber(Object object, Map<Class<?>, INumberConverter> converters) {
         if (object == null) {
@@ -24,7 +24,10 @@ public class ToNumberConverter {
                 throw new CalculationException(String.format("Cannot parse bigdecimal from string '%s'.", value), e);
             }
         }
-
+	    if (object instanceof INumber) {
+	    	return ((INumber)object).toBigDecimal();
+	    }
+        
         INumberConverter numberConverter = converters.get(object.getClass());
         if (numberConverter == null) {
             throw new CalculationException(String.format("Cannot find converter for '%s'.", object));
@@ -55,7 +58,7 @@ public class ToNumberConverter {
         	
             return (RETURN_TYPE)NumberTypeConverter.convert(value, (Class)returnType);
         }
-
+        
         INumberConverter numberConverter = converters.get(returnType);
         if (numberConverter == null) {
             throw new CalculationException(String.format("Cannot find converter for '%s'.", returnType.getName()));

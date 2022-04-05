@@ -6,6 +6,7 @@ import scalc.exceptions.CalculationException;
 import scalc.interfaces.INumberConverter;
 import scalc.test.model.Money;
 import scalc.test.model.MoneyConverter;
+import scalc.test.model.Percentage;
 import scalc.test.model.TestDto;
 
 import java.math.BigDecimal;
@@ -851,5 +852,27 @@ public class SCalcTest {
 				.calc();
 		
 		Assert.assertEquals(1L, result.get());
+	}
+	
+	@Test
+	public void testConverting_INumber() {
+		double result = SCalcBuilder.doubleInstance()
+				.subtractExpression()
+				.build()
+				.params(new Percentage(0.0001))
+				.params(new Percentage(0.0006))
+				.calc();
+		
+		Assert.assertEquals(-0.0005, result, 0.0);
+	}
+	
+	@Test(expected = CalculationException.class)
+	public void testConverting_INumber_NotAsReturnType() {
+		SCalcBuilder.instanceFor(Percentage.class)
+				.subtractExpression()
+				.build()
+				.params(new Percentage(0.0001))
+				.params(new Percentage(0.0006))
+				.calc();
 	}
 }
