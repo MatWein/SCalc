@@ -9,8 +9,11 @@ import scalc.test.model.MoneyConverter;
 import scalc.test.model.Percentage;
 import scalc.test.model.TestDto;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -363,19 +366,19 @@ public class SCalcTest {
         dtos.add(null);
         dtos.add(new TestDto(2.0));
 
-        INumberConverter<TestDto> numberConverter = new INumberConverter<TestDto>() {
-            @Override
-            public BigDecimal toBigDecimal(TestDto input) {
-                if (input == null) {
-                    return null;
-                }
-                return BigDecimal.valueOf(input.getValueToExtract()).setScale(2, RoundingMode.HALF_UP);
-            }
-
-            @Override
-            public TestDto fromBigDecimal(BigDecimal input) {
-                throw new RuntimeException("Not implemented");
-            }
+        INumberConverter<TestDto> numberConverter = new INumberConverter<>() {
+	        @Override
+	        public BigDecimal toBigDecimal(TestDto input) {
+		        if (input == null) {
+			        return null;
+		        }
+		        return BigDecimal.valueOf(input.getValueToExtract()).setScale(2, RoundingMode.HALF_UP);
+	        }
+	
+	        @Override
+	        public TestDto fromBigDecimal(BigDecimal input) {
+		        throw new RuntimeException("Not implemented");
+	        }
         };
 
         Double result = SCalcBuilder.doubleInstance()
@@ -874,5 +877,57 @@ public class SCalcTest {
 				.params(new Percentage(0.0001))
 				.params(new Percentage(0.0006))
 				.calc();
+	}
+	
+	@Test(expected = CalculationException.class)
+	public void testInvalidExpression() {
+		SCalcBuilder.doubleInstance()
+				.expression("#*'\\//")
+				.buildAndCalc();
+	}
+	
+	@Test
+	public void testExpressionFromClasspath() {
+		double result = SCalcBuilder.doubleInstance()
+				.expressionFromClasspath("/expressions/test.scalc")
+				.buildAndCalc();
+		
+		Assert.assertEquals(0.0, result, 0.0);
+	}
+	
+	@SuppressWarnings("ConstantConditions")
+	@Test
+	public void testExpressionFromFile() {
+		double result = SCalcBuilder.doubleInstance()
+				.expressionFromFile(new File(getClass().getResource("/expressions/test.scalc").getFile()))
+				.buildAndCalc();
+		
+		Assert.assertEquals(0.0, result, 0.0);
+	}
+	
+	@SuppressWarnings("ConstantConditions")
+	@Test
+	public void testExpressionFromPath() throws URISyntaxException {
+		double result = SCalcBuilder.doubleInstance()
+				.expressionFromPath(Paths.get(getClass().getResource("/expressions/test.scalc").toURI()))
+				.buildAndCalc();
+		
+		Assert.assertEquals(0.0, result, 0.0);
+	}
+	
+	@Test
+	public void testExpressionFromClasspath_Negate() {
+		double result = SCalcBuilder.doubleInstance()
+				.expressionFromClasspath("/expressions/negate.scalc")
+				.buildAndCalc();
+		
+		Assert.assertEquals(-8.0, result, 0.0);
+	}
+	
+	@Test(expected = CalculationException.class)
+	public void testExpressionFromClasspath_NotFound() {
+		SCalcBuilder.doubleInstance()
+				.expressionFromClasspath("/expressions/not_found.scalc")
+				.buildAndCalc();
 	}
 }

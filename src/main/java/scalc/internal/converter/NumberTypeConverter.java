@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-@SuppressWarnings("unchecked")
 public class NumberTypeConverter {
     public static <RETURN_TYPE extends Number> RETURN_TYPE convert(Number value, Class<RETURN_TYPE> returnType) {
         Number valueToConvert = value;

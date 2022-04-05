@@ -6,8 +6,15 @@ import scalc.interfaces.INumberConverter;
 import scalc.interfaces.SCalcExpressions;
 import scalc.internal.functions.Functions;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -151,7 +158,91 @@ public final class SCalcBuilder<RETURN_TYPE> {
         this.options.setExpression(rawExpression);
         return this;
     }
-    
+	
+	/**
+	 * Loads the expression from a classpath file.<br/>
+	 * Default encoding: UTF-8
+	 * @param path Classpath to load from. Usually starts with '/'
+	 */
+	public final SCalcBuilder<RETURN_TYPE> expressionFromClasspath(String path) {
+    	return expressionFromClasspath(path, StandardCharsets.UTF_8);
+	}
+	
+	/**
+	 * Loads the expression from a classpath file.<br/>
+	 * @param path Classpath to load from. Usually starts with '/'
+	 * @param charset Charset to read file.
+	 */
+	public final SCalcBuilder<RETURN_TYPE> expressionFromClasspath(String path, Charset charset) {
+    	try (var inputStream = getClass().getResourceAsStream(path)) {
+    		if (inputStream == null) {
+			    String message = String.format("Could not find file in classpath: %s", path);
+			    throw new CalculationException(message);
+		    }
+    		
+			return expression(new String(inputStream.readAllBytes(), charset));
+	    } catch (IOException e) {
+		    String message = String.format("Error on reading file from classpath: %s using charset: %s", path, charset);
+		    throw new CalculationException(message, e);
+	    }
+	}
+	
+	/**
+	 * Loads the expression from a file.<br/>
+	 * Default encoding: UTF-8
+	 * @param file File to load from.
+	 */
+	public final SCalcBuilder<RETURN_TYPE> expressionFromFile(File file) {
+		return expressionFromFile(file, StandardCharsets.UTF_8);
+	}
+	
+	/**
+	 * Loads the expression from a file.<br/>
+	 * @param file File to load from.
+	 * @param charset Charset to read file.
+	 */
+	public final SCalcBuilder<RETURN_TYPE> expressionFromFile(File file, Charset charset) {
+		if (!file.isFile()) {
+			String message = String.format("Could not find file: %s", file);
+			throw new CalculationException(message);
+		}
+		
+		try (var inputStream = new FileInputStream(file)) {
+			return expression(new String(inputStream.readAllBytes(), charset));
+		} catch (IOException e) {
+			String message = String.format("Error on reading file: %s using charset: %s", file, charset);
+			throw new CalculationException(message, e);
+		}
+	}
+	
+	/**
+	 * Loads the expression from a file.<br/>
+	 * Default encoding: UTF-8
+	 * @param path File to load from.
+	 */
+	public final SCalcBuilder<RETURN_TYPE> expressionFromPath(Path path) {
+		return expressionFromPath(path, StandardCharsets.UTF_8);
+	}
+	
+	/**
+	 * Loads the expression from a file.<br/>
+	 * @param path File to load from.
+	 * @param charset Charset to read file.
+	 */
+	public final SCalcBuilder<RETURN_TYPE> expressionFromPath(Path path, Charset charset) {
+		if (Files.notExists(path)) {
+			String message = String.format("Could not find file: %s", path);
+			throw new CalculationException(message);
+		}
+		
+		try {
+			return expression(Files.readString(path, charset));
+		} catch (IOException e) {
+			String message = String.format("Error on reading file: %s using charset: %s", path, charset);
+			throw new CalculationException(message, e);
+		}
+	}
+	
     /**
      * [REQUIRED] Expression to parse. For further details see documentation.
      */

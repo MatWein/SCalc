@@ -40,7 +40,7 @@ public class SCalcExecutor {
         try {
 	        nextChar();
 	        BigDecimal x = parseExpression();
-	        if (pos < expression.length()) throw new CalculationException("Unexpected: " + currentChar);
+	        if (pos < expression.length()) throw new CalculationException("Unexpected character: " + currentChar);
 	        return x;
         } catch (Throwable e) {
         	String message = String.format("Unexpected error on calculation of expression: %s", expression);
@@ -111,18 +111,6 @@ public class SCalcExecutor {
             while (Functions.calculateIsValidFunctionChar(currentChar)) nextChar();
             String func = expression.substring(startPos, this.pos);
 
-            boolean isEmptyFunctionBody = expression.charAt(this.pos) == '(' && expression.charAt(this.pos + 1) == ')';
-            List<BigDecimal> factors;
-            if (isEmptyFunctionBody) {
-                factors = new ArrayList<>();
-                eat('(');
-                eat(')');
-            } else {
-                eat('(');
-                factors = parseExpressions();
-                eat(')');
-            }
-
             FunctionImpl funcImpl = Functions.FUNCTIONS.get(func);
             if (funcImpl == null) {
                 funcImpl = customFunctions.get(func);
@@ -131,8 +119,20 @@ public class SCalcExecutor {
 		        funcImpl = options.getUserFunctions().get(func);
 	        }
             if (funcImpl == null) {
-                throw new CalculationException("Unknown function: " + func);
+                throw new CalculationException("Unknown identifier: " + func);
             }
+	
+	        boolean isEmptyFunctionBody = expression.charAt(this.pos) == '(' && expression.charAt(this.pos + 1) == ')';
+	        List<BigDecimal> factors;
+	        if (isEmptyFunctionBody) {
+		        factors = new ArrayList<>();
+		        eat('(');
+		        eat(')');
+	        } else {
+		        eat('(');
+		        factors = parseExpressions();
+		        eat(')');
+	        }
 
             x = funcImpl.call(options, factors);
     
@@ -140,7 +140,7 @@ public class SCalcExecutor {
                     "Call function '%s'. Params: '%s'. Result: %s",
                     funcImpl.getClass().getSimpleName(), factors, x);
         } else {
-            throw new CalculationException("Unexpected: " + currentChar);
+            throw new CalculationException("Unexpected character: " + currentChar);
         }
 
         if (eat('^')) {

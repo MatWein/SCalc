@@ -1,0 +1,3 @@
+negate(x) = -1 * x;
+
+return negate(2) * negate(-4);

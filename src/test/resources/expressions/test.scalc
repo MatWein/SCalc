@@ -1,0 +1,8 @@
+p(x, y) = (x / y) * 100;
+
+a = 150;
+b = a * 10;
+c = a + b;
+count = 22912;
+
+return (p(a, count) + p(b, count)) - p(c, count);
