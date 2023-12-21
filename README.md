@@ -44,6 +44,8 @@ int result = SCalcBuilder.integerInstance()
     .buildAndCalc();
 ```
 
+Further examples can be found here: https://github.com/MatWein/SCalc/blob/master/src/test/java/scalc/SCalcTest.java
+
 ### Parameter
 Parameters for the calculation can be added by using:  
 - the .parameter(name, number) method  
@@ -62,6 +64,37 @@ double result = SCalcBuilder.doubleInstance()
     .parameter(TestDto::getValueToExtract, dtos)
     .calc();
 ```
+
+Hint: Collections and arrays can also be nested. Example:
+```
+SCalcBuilder.doubleInstance()
+	.expression("sum(ALL_PARAMS)")
+	.build()
+	.parameter(List.of(10.0, 20.0, 1.0))
+	.parameter(Set.of(10.0, 20.0, List.of(0.5, 0.5)))
+	.parameter(new Object[] { 10.0, 20.0, new Double[] { 1.0 } })
+	.parameter("test", new Number[] { 10.0, 20.0, 1.0 })
+	.parameter(new Object[] { new long[] { 10L }, new double[] { 20.0 }, new int[] { 1 } })
+	.calc()
+```
+
+Result will be 155.
+
+```
+List<TestDto> list1 = List.of(new TestDto(10.0), new TestDto(20.0));
+List<TestDto> list2 = List.of(new TestDto(30.0), new TestDto(40.0), new TestDto(50.0));
+List<TestDto> list3 = List.of(new TestDto(0.0), new TestDto(70.0));
+
+double result = SCalcBuilder.doubleInstance()
+	.expression("sum(list1) * sum(list2) * sum(list3)")
+	.build()
+	.parameter(TestDto::getValueToExtract, "list1", list1)
+	.parameter(TestDto::getValueToExtract, "list2", list2)
+	.parameter(TestDto::getValueToExtract, "list3", list3)
+	.calc();
+```
+
+Result will be 252000.
 
 ## Custom type converters
 Besides the standard Java types, there is the possibility to define your own types. Important to know is, that there are global type converters and local type converters. Global means that every new instance of SCalc will have it. Local type convertes on the other hand have to be declared on every builder call:
