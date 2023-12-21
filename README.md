@@ -50,7 +50,7 @@ Parameters for the calculation can be added by using:
 - the .parameter(name, number[]) method  
 - the .parameter(name, collection<number>) method  
 - the .parameter(map) method  
-- the .parameter(...) method. This method can be used in form of .params("a", 10, "b", 100, "c", 20) or to add parameters like .params(10, 100, 20) which will result in param0 = 10,100,20.
+- the .parameter(...) method. This method can be used in form of .parameter("a", 10, "b", 100, "c", 20) or to add parameters like .parameter(10, 100, 20) which will result in param0 = 10,100,20.
 
 Hint: It is also possible to give an extract function to the parameter methods to extract nested properties. Example:
 ```
@@ -216,7 +216,7 @@ This is the smallest form of expression. You can only enter one single operator,
 double result = SCalcBuilder.doubleInstance()
     .expression("+")
     .build()
-    .params(2, 3, 2)
+    .parameter(2, 3, 2)
     .calc();
 ```
 Result will be 2+3+2=7.
@@ -241,7 +241,7 @@ BigDecimal result = SCalcBuilder.bigDecimalInstance()
     .expression("a + b * √(16)")
     .resultScale(1, RoundingMode.HALF_UP)
     .build()
-    .params(params)
+    .parameter(params)
     .calc();
 ```
 Result will be 18.
@@ -321,7 +321,7 @@ double result = SCalcBuilder.doubleInstance()
     .debug(true)
     .debugLogger(message -> System.out.println(message))
     .build()
-    .paramsAsCollection(TestDto::getValueToExtract, dtos)
+    .parameter(TestDto::getValueToExtract, dtos)
     .calc();
 ```
 
