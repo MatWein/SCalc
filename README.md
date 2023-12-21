@@ -11,7 +11,7 @@ SCalc can be used by adding the following dependency to your maven pom.xml:
 <dependency>
   <groupId>io.github.matwein</groupId>
   <artifactId>scalc-core</artifactId>
-  <version>2.0.2</version>
+  <version>2.1.0</version>
 </dependency>
 ```
 
@@ -47,18 +47,19 @@ int result = SCalcBuilder.integerInstance()
 ### Parameter
 Parameters for the calculation can be added by using:  
 - the .parameter(name, number) method  
-- the .params(map) method  
-- the .params(...) method. This method can be used in form of .params("a", 10, "b", 100, "c", 20) or to add parameters like .params(10, 100, 20) which will result in param0 = 10, param1 = 100, ...
-- the .paramsAsCollection(collection) method. Same logic as .params(...) method, but takes a collection instead of an array.
+- the .parameter(name, number[]) method  
+- the .parameter(name, collection<number>) method  
+- the .parameter(map) method  
+- the .parameter(...) method. This method can be used in form of .params("a", 10, "b", 100, "c", 20) or to add parameters like .params(10, 100, 20) which will result in param0 = 10,100,20.
 
-Hint: It is also possible to give an extract function to the params... methods to extract nested properties. Example:
+Hint: It is also possible to give an extract function to the parameter methods to extract nested properties. Example:
 ```
 List<TestDto> dtos = new ArrayList<>(); ...
 
 double result = SCalcBuilder.doubleInstance()
     .sumExpression()
     .build()
-    .paramsAsCollection(TestDto::getValueToExtract, dtos)
+    .parameter(TestDto::getValueToExtract, dtos)
     .calc();
 ```
 
@@ -72,7 +73,7 @@ SCalcBuilder.registerGlobalConverter(Money.class, MoneyConverter.class);
 Money result = SCalcBuilder.instanceFor(Money.class)
     .expression("var1 - var2")
     .build()
-    .params("var1", 10.9, "var2", 0.9)
+    .parameter("var1", 10.9, "var2", 0.9)
     .calc();
 ```
 
@@ -82,7 +83,7 @@ Money result = SCalcBuilder.instanceFor(Money.class)
     .expression("(√(16, 4) + 2) / (99.99 - 79.99 - 16)")
     .registerConverter(Money.class, MoneyConverter.class)
     .build()
-    .params(params)
+    .parameter(params)
     .calc();
 ```
 
@@ -94,8 +95,8 @@ public class Percentage implements INumber { ... }
 double result = SCalcBuilder.doubleInstance()
     .subtractExpression()
     .build()
-    .params(new Percentage(0.0001))
-    .params(new Percentage(0.0006))
+    .parameter(new Percentage(0.0001))
+    .parameter(new Percentage(0.0006))
     .calc();
 ```
 

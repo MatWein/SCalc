@@ -7,25 +7,33 @@ import scalc.internal.SCalcLogger;
 import scalc.internal.converter.NumberTypeConverter;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SingleOperatorExpressionController {
     public static BigDecimal parseSingleOperatorExpression(
             String expression,
             SCalcOptions<?> options,
-            Map<String, Number> params) {
+            Map<String, Number[]> params) {
         
         if (params == null || params.isEmpty()) {
             return new BigDecimal(0).setScale(options.getCalculationScale(), options.getCalculationRoundingMode());
         }
 
-        List<Number> paramsInOrder = new ArrayList<>(params.values());
-
-        BigDecimal result = NumberTypeConverter.convert(paramsInOrder.get(0), BigDecimal.class);
+        List<BigDecimal> paramsInOrder = params.values().stream()
+		        .flatMap(Arrays::stream)
+		        .map(b -> NumberTypeConverter.convert(b, BigDecimal.class))
+		        .collect(Collectors.toList());
+	    
+	    if (paramsInOrder.isEmpty()) {
+		    return new BigDecimal(0).setScale(options.getCalculationScale(), options.getCalculationRoundingMode());
+	    }
+		
+        BigDecimal result = paramsInOrder.get(0);
         for (int i = 1; i < paramsInOrder.size(); i++) {
-            BigDecimal value = NumberTypeConverter.convert(paramsInOrder.get(i), BigDecimal.class);
+            BigDecimal value = paramsInOrder.get(i);
 
             switch (expression) {
                 case SCalcExpressions.SUM_EXPRESSION: result = result.add(value); break;

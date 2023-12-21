@@ -1,7 +1,7 @@
 package scalc;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -13,7 +13,7 @@ public class SCalcBuilderTest {
 				.expression("10.2 - 0.3")
 				.buildAndCalc();
 		
-		Assert.assertEquals(9.9, result, 0.0);
+		Assertions.assertEquals(9.9, result, 0.0);
 	}
 	
 	@Test
@@ -22,7 +22,7 @@ public class SCalcBuilderTest {
 				.expression("10.2 - 0.3")
 				.buildAndCalc();
 		
-		Assert.assertEquals(9.9F, result, 0.0F);
+		Assertions.assertEquals(9.9F, result, 0.0F);
 	}
 	
 	@Test
@@ -31,7 +31,7 @@ public class SCalcBuilderTest {
 				.expression("10.2 - 0.3")
 				.buildAndCalc();
 		
-		Assert.assertEquals(9, result);
+		Assertions.assertEquals(9, result);
 	}
 	
 	@Test
@@ -40,7 +40,7 @@ public class SCalcBuilderTest {
 				.expression("10.2 - 0.3")
 				.buildAndCalc();
 		
-		Assert.assertEquals(9, result);
+		Assertions.assertEquals(9, result);
 	}
 	
 	@Test
@@ -49,7 +49,7 @@ public class SCalcBuilderTest {
 				.expression("10.2 - 0.3")
 				.buildAndCalc();
 		
-		Assert.assertEquals(9L, result);
+		Assertions.assertEquals(9L, result);
 	}
 	
 	@Test
@@ -58,6 +58,6 @@ public class SCalcBuilderTest {
 				.expression("10.2 - 0.3")
 				.buildAndCalc();
 		
-		Assert.assertEquals(new BigDecimal("9.9").setScale(SCalcOptions.DEFAULT_SCALE, RoundingMode.HALF_UP), result);
+		Assertions.assertEquals(new BigDecimal("9.9").setScale(SCalcOptions.DEFAULT_SCALE, RoundingMode.HALF_UP), result);
 	}
 }

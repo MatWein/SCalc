@@ -5,9 +5,56 @@ import scalc.interfaces.INumber;
 import scalc.interfaces.INumberConverter;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ToNumberConverter {
+    public static <T> Number[] toNumbers(Object object, Function<T, Object> paramExtractor, Map<Class<?>, INumberConverter> converters) {
+		if (object == null) {
+			return new Number[] { 0.0 };
+		}
+		
+		if (object instanceof Collection) {
+			return ((Collection<T>) object).stream()
+					.map(o -> toNumbers(o, paramExtractor, converters))
+					.flatMap(Arrays::stream)
+					.collect(Collectors.toList())
+					.toArray(new Number[] {});
+		} else if (object instanceof Object[]) {
+			return Arrays.stream((Object[]) object)
+					.map(o -> toNumbers(o, paramExtractor, converters))
+					.flatMap(Arrays::stream)
+					.collect(Collectors.toList())
+					.toArray(new Number[] {});
+		} else if (object instanceof int[]) {
+			return Arrays.stream((int[]) object)
+					.boxed()
+					.map(o -> toNumbers(o, paramExtractor, converters))
+					.flatMap(Arrays::stream)
+					.collect(Collectors.toList())
+					.toArray(new Number[] {});
+		} else if (object instanceof long[]) {
+			return Arrays.stream((long[]) object)
+					.boxed()
+					.map(o -> toNumbers(o, paramExtractor, converters))
+					.flatMap(Arrays::stream)
+					.collect(Collectors.toList())
+					.toArray(new Number[] {});
+		} else if (object instanceof double[]) {
+			return Arrays.stream((double[]) object)
+					.boxed()
+					.map(o -> toNumbers(o, paramExtractor, converters))
+					.flatMap(Arrays::stream)
+					.collect(Collectors.toList())
+					.toArray(new Number[] {});
+		} else {
+			return new Number[] { toNumber(paramExtractor.apply((T)object), converters) };
+		}
+    }
+	
     public static Number toNumber(Object object, Map<Class<?>, INumberConverter> converters) {
         if (object == null) {
             return 0.0;

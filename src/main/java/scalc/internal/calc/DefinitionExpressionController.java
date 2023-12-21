@@ -24,7 +24,7 @@ public class DefinitionExpressionController {
     
     static BigDecimal parseDefinitionExpression(SCalc<?> sCalc) {
         SCalcOptions<?> options = sCalc.getOptions();
-        Map<String, Number> customParams = new LinkedHashMap<>(sCalc.getParams());
+        Map<String, Number[]> customParams = new LinkedHashMap<>(sCalc.getParams());
         Map<String, FunctionImpl> customFunctions = new HashMap<>();
 
         String[] definitions = options.getExpression().split(EXPRESSION_SEPARATOR);
@@ -41,7 +41,7 @@ public class DefinitionExpressionController {
 
     private static BigDecimal calculateReturnStatement(
             SCalcOptions<?> options,
-            Map<String, Number> customParams,
+            Map<String, Number[]> customParams,
             Map<String, FunctionImpl> customFunctions,
             String definition) {
 
@@ -59,7 +59,7 @@ public class DefinitionExpressionController {
 
     private static void assignVariableOrFunction(
             SCalcOptions<?> options,
-            Map<String, Number> customParams,
+            Map<String, Number[]> customParams,
             Map<String, FunctionImpl> customFunctions,
             String definition) {
 
@@ -82,7 +82,7 @@ public class DefinitionExpressionController {
     }
 
     private static void assignFunction(
-            final Map<String, Number> customParams,
+            final Map<String, Number[]> customParams,
             final Map<String, FunctionImpl> customFunctions,
             final String functionName,
             final String expression) {
@@ -96,12 +96,12 @@ public class DefinitionExpressionController {
         final String[] parameterNames = matcher.group(2).split(",");
 
         customFunctions.put(name, (options, functionParams) -> {
-            Map<String, Number> functionParamsAsMap = new LinkedHashMap<>(customParams);
+            Map<String, Number[]> functionParamsAsMap = new LinkedHashMap<>(customParams);
             for (int i = 0; i < functionParams.size(); i++) {
                 String paramName = parameterNames[i].trim();
                 BigDecimal paramValue = functionParams.get(i);
 
-                functionParamsAsMap.put(paramName, paramValue);
+                functionParamsAsMap.put(paramName, new Number[] { paramValue });
             }
 
             String resolvedExpression = resolveExpression(options, expression, functionParamsAsMap);
@@ -118,7 +118,7 @@ public class DefinitionExpressionController {
 
     private static void assignVariable(
             SCalcOptions<?> options,
-            Map<String, Number> customParams,
+            Map<String, Number[]> customParams,
             Map<String, FunctionImpl> customFunctions,
             String variableName,
             String expression) {
@@ -131,6 +131,6 @@ public class DefinitionExpressionController {
                 "Calculated variable: '%s'. Expression: '%s'. Resolved expression: '%s'. Result: %s",
                 variableName, expression, resolvedExpression, result);
         
-        customParams.put(variableName, result);
+        customParams.put(variableName, new Number[] { result });
     }
 }

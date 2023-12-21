@@ -16,14 +16,14 @@ public class SCalcUtil {
 		return SCalcBuilder.instanceFor(returnType)
 				.sumExpression()
 				.build()
-				.paramsAsCollection(numbersToSummarize)
+				.parameter(numbersToSummarize)
 				.calc();
 	}
 	
 	/**
 	 * Calculates the sum of all (extracted) elements within the given collection.<br/>
 	 * Attention: Be aware of the maximum calculation scale in <code>scalc.SCalcOptions#DEFAULT_SCALE</code>.
-	 * If you need an higher scale use SCalcBuilder directly instead of this shortcut method!
+	 * If you need a higher scale use SCalcBuilder directly instead of this shortcut method!
 	 * @param returnType Type to convert the result number into.
 	 * @param numbersToSummarize Elements to calculate sum.
 	 * @param paramExtractor Extractor will be called for each element within the collection. The output will be summarized.
@@ -36,7 +36,7 @@ public class SCalcUtil {
 		return SCalcBuilder.instanceFor(returnType)
 				.sumExpression()
 				.build()
-				.paramsAsCollection(paramExtractor, numbersToSummarize)
+				.parameter(paramExtractor, numbersToSummarize)
 				.calc();
 	}
 	
@@ -51,7 +51,7 @@ public class SCalcUtil {
 		return SCalcBuilder.instanceFor(returnType)
 				.sumExpression()
 				.build()
-				.params(numbersToSummarize)
+				.parameter(numbersToSummarize)
 				.calc();
 	}
 	
@@ -114,7 +114,7 @@ public class SCalcUtil {
 				.calculationScale(scale, roundingMode)
 				.resultScale(scale, roundingMode)
 				.build()
-				.params(numberToRound)
+				.parameter(numberToRound)
 				.calc();
 	}
 }

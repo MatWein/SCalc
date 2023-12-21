@@ -1,7 +1,7 @@
 package scalc;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import scalc.test.model.Money;
 import scalc.test.model.MoneyConverter;
 
@@ -15,31 +15,31 @@ public class SCalcUtilTest {
 	@Test
 	public void testRound() {
 		double result = SCalcUtil.round(10.55, 1, RoundingMode.HALF_UP, double.class);
-		Assert.assertEquals(10.6, result, 0.0);
+		Assertions.assertEquals(10.6, result, 0.0);
 	}
 	
 	@Test
 	public void testRound_MoreThanInternalScale() {
 		double result = SCalcUtil.round(10.012345678912345, 14, RoundingMode.HALF_UP, double.class);
-		Assert.assertEquals(10.01234567891235, result, 0.0);
+		Assertions.assertEquals(10.01234567891235, result, 0.0);
 	}
 	
 	@Test
 	public void testRound_Null() {
 		BigDecimal result = SCalcUtil.round(null, 1, RoundingMode.HALF_UP, BigDecimal.class);
-		Assert.assertNull(result);
+		Assertions.assertNull(result);
 	}
 	
 	@Test
 	public void testRound_SameReturnTypeAsInput_Null() {
 		Double result = SCalcUtil.round(null, 2);
-		Assert.assertNull(result);
+		Assertions.assertNull(result);
 	}
 	
 	@Test
 	public void testRound_SameReturnTypeAsInput_Double() {
 		double result = SCalcUtil.round(10.5567, 2);
-		Assert.assertEquals(10.56, result, 0.0);
+		Assertions.assertEquals(10.56, result, 0.0);
 	}
 	
 	@Test
@@ -47,7 +47,7 @@ public class SCalcUtilTest {
 		SCalcBuilder.registerGlobalConverter(Money.class, MoneyConverter.class);
 		try {
 			Money result = SCalcUtil.round(new Money(0.000012), 5);
-			Assert.assertEquals(0.00001, result.getValue(), 0.0);
+			Assertions.assertEquals(0.00001, result.getValue(), 0.0);
 		} finally {
 			SCalcBuilder.removeGlobalConverter(Money.class);
 		}
@@ -56,19 +56,19 @@ public class SCalcUtilTest {
 	@Test
 	public void testRound_DifferentReturnTypeAsInput() {
 		BigDecimal result = SCalcUtil.round(-999.99, 2, BigDecimal.class);
-		Assert.assertEquals(BigDecimal.valueOf(-999.99), result);
+		Assertions.assertEquals(BigDecimal.valueOf(-999.99), result);
 	}
 	
 	@Test
 	public void testSummarize() {
 		double result = SCalcUtil.summarize(double.class, -10.0, 15.0, 60.1);
-		Assert.assertEquals(65.1, result, 0.0);
+		Assertions.assertEquals(65.1, result, 0.0);
 	}
 	
 	@Test
 	public void testSummarize_ReturnZeroIfEmpty() {
 		double result = SCalcUtil.summarize(double.class);
-		Assert.assertEquals(0.0, result, 0.0);
+		Assertions.assertEquals(0.0, result, 0.0);
 	}
 	
 	@Test
@@ -79,7 +79,7 @@ public class SCalcUtilTest {
 		numbers.add(3.2);
 		
 		Double result = SCalcUtil.summarizeCollection(Double.class, numbers);
-		Assert.assertEquals(6.3, result, 0.0);
+		Assertions.assertEquals(6.3, result, 0.0);
 	}
 	
 	@Test
@@ -87,7 +87,7 @@ public class SCalcUtilTest {
 		List<Double> numbers = new ArrayList<>();
 		
 		double result = SCalcUtil.summarizeCollection(double.class, numbers);
-		Assert.assertEquals(0.0, result, 0.0);
+		Assertions.assertEquals(0.0, result, 0.0);
 	}
 	
 	@Test
@@ -98,7 +98,7 @@ public class SCalcUtilTest {
 		numbers.add(new Money(3.2));
 		
 		Double result = SCalcUtil.summarizeCollection(Double.class, numbers, Money::getValue);
-		Assert.assertEquals(6.3, result, 0.0);
+		Assertions.assertEquals(6.3, result, 0.0);
 	}
 	
 	@Test
@@ -106,18 +106,18 @@ public class SCalcUtilTest {
 		List<Double> numbers = null;
 		
 		double result = SCalcUtil.summarize(double.class, numbers);
-		Assert.assertEquals(0.0, result, 0.0);
+		Assertions.assertEquals(0.0, result, 0.0);
 	}
 	
 	@Test
 	public void testSummarize_DifferentInputTypes() {
 		double result = SCalcUtil.summarize(double.class, 1.0, BigDecimal.valueOf(2.0), 7L);
-		Assert.assertEquals(10.0, result, 0.0);
+		Assertions.assertEquals(10.0, result, 0.0);
 	}
 	
 	@Test
 	public void testSummarize_LimitToInternalScale() {
 		double result = SCalcUtil.summarize(double.class, 1.0123456789123456);
-		Assert.assertEquals(1.0123456789, result, 0.0);
+		Assertions.assertEquals(1.0123456789, result, 0.0);
 	}
 }

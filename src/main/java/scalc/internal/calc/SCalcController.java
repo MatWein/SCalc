@@ -34,7 +34,7 @@ public class SCalcController {
 
     private static <RETURN_TYPE> BigDecimal calculateResult(SCalc<RETURN_TYPE> sCalc) {
         SCalcOptions<RETURN_TYPE> options = sCalc.getOptions();
-        Map<String, Number> params = sCalc.getParams();
+        Map<String, Number[]> params = sCalc.getParams();
         String expression = options.getExpression();
 
         if (SINGLE_OPERATOR_EXPRESSIONS.contains(expression)) {

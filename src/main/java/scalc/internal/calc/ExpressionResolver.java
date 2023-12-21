@@ -6,12 +6,13 @@ import scalc.internal.constants.Constants;
 import scalc.internal.converter.NumberTypeConverter;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 public class ExpressionResolver {
-    public static String resolveExpression(SCalcOptions<?> options, String expression, Map<String, Number> params) {
+    public static String resolveExpression(SCalcOptions<?> options, String expression, Map<String, Number[]> params) {
         expression = replaceGivenParamsInExpression(expression, params);
         expression = replaceAllParamsConstant(expression, params);
         expression = replaceGlobalConstants(options, expression);
@@ -32,7 +33,7 @@ public class ExpressionResolver {
         return expression;
     }
 
-    private static String replaceAllParamsConstant(String expression, Map<String, Number> params) {
+    private static String replaceAllParamsConstant(String expression, Map<String, Number[]> params) {
         String paramString = params.values().stream()
                 .map(ExpressionResolver::paramToString)
                 .collect(Collectors.joining(","));
@@ -40,16 +41,18 @@ public class ExpressionResolver {
         return replaceWord(expression, SCalcExpressions.ALL_PARAMS, paramString);
     }
 
-    private static String replaceGivenParamsInExpression(String expression, Map<String, Number> params) {
-        for (Entry<String, Number> param : params.entrySet()) {
+    private static String replaceGivenParamsInExpression(String expression, Map<String, Number[]> params) {
+        for (Entry<String, Number[]> param : params.entrySet()) {
             String number = param.getValue() == null ? "0" : paramToString(param.getValue());
             expression = replaceWord(expression, param.getKey(), number);
         }
         return expression;
     }
 
-    private static String paramToString(Number param) {
-        return NumberTypeConverter.convert(param, BigDecimal.class).toPlainString();
+    private static String paramToString(Number[] params) {
+	    return Arrays.stream(params)
+			    .map(number -> NumberTypeConverter.convert(number, BigDecimal.class).toPlainString())
+			    .collect(Collectors.joining(","));
     }
 
     private static String replaceWord(String value, String wordToReplace, String newValue) {

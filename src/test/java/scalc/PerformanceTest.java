@@ -1,15 +1,15 @@
 package scalc;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class PerformanceTest {
 	private static final int ITERATIONS = 100000;
 	
 	private SCalc<Long> sCalc;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         sCalc = SCalcBuilder.instanceFor(Long.class)
                 .expression("f(a, b)=√(a² - (b² / 2)); return f(a, b);")
@@ -36,6 +36,6 @@ public class PerformanceTest {
 	
 	    long i = ITERATIONS - 1;
 	    long pow = i * i;
-	    Assert.assertEquals((long)(Math.sqrt(pow - (pow / 2.0))), result, 0);
+	    Assertions.assertEquals((long)(Math.sqrt(pow - (pow / 2.0))), result, 0);
     }
 }

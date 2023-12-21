@@ -1,7 +1,7 @@
 package scalc.internal.converter;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import scalc.exceptions.CalculationException;
 
 import java.math.BigDecimal;
@@ -13,39 +13,39 @@ public class NumberTypeConverterTest {
 
         Double result = NumberTypeConverter.convert(number, Double.class);
 
-        Assert.assertSame(number, result);
+        Assertions.assertSame(number, result);
     }
 
     @Test
     public void convert_Null() {
         Double result = NumberTypeConverter.convert(null, Double.class);
 
-        Assert.assertEquals(0.0, result, 0);
+        Assertions.assertEquals(0.0, result, 0);
     }
 
     @Test
     public void convert() {
         BigDecimal result = NumberTypeConverter.convert(12.99, BigDecimal.class);
 
-        Assert.assertEquals(new BigDecimal("12.99"), result);
+        Assertions.assertEquals(new BigDecimal("12.99"), result);
     }
 
     @Test
     public void convert_Integer() {
         Integer result = NumberTypeConverter.convert(12L, Integer.class);
 
-        Assert.assertEquals(12, result, 0);
+        Assertions.assertEquals(12, result, 0);
     }
 
     @Test
     public void convert_Long() {
         Long result = NumberTypeConverter.convert(120.1, Long.class);
 
-        Assert.assertEquals(120, result, 0);
+        Assertions.assertEquals(120, result, 0);
     }
 
-    @Test(expected = CalculationException.class)
+    @Test
     public void convert_UnsupportedType() {
-        NumberTypeConverter.convert(120.1, Byte.class);
+        Assertions.assertThrows(CalculationException.class, () -> NumberTypeConverter.convert(120.1, Byte.class));
     }
 }

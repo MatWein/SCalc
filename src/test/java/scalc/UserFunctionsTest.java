@@ -1,7 +1,7 @@
 package scalc;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import scalc.exceptions.CalculationException;
 import scalc.interfaces.FunctionImpl;
 
@@ -20,7 +20,7 @@ public class UserFunctionsTest {
 				.registerUserFunction("negate", function)
 				.buildAndCalc();
 		
-		Assert.assertEquals(-1, result);
+		Assertions.assertEquals(-1, result);
 	}
 	
 	@Test
@@ -35,17 +35,17 @@ public class UserFunctionsTest {
 					.expression("percent(12, 200)")
 					.buildAndCalc();
 			
-			Assert.assertEquals(6, result);
+			Assertions.assertEquals(6, result);
 		} finally {
 			SCalcBuilder.removeGlobalUserFunction("percent");
 		}
 	}
 	
-	@Test(expected = CalculationException.class)
+	@Test
 	public void testUserFunction_InvalidFunctionName() {
-		SCalcBuilder.integerInstance()
+		Assertions.assertThrows(CalculationException.class, () -> SCalcBuilder.integerInstance()
 				.expression("return0(2) + 1")
 				.registerUserFunction("return0", (options, functionParams) -> new BigDecimal(0))
-				.buildAndCalc();
+				.buildAndCalc());
 	}
 }
